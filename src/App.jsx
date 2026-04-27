@@ -53,6 +53,7 @@ export default function StartupStudio() {
   const [loadingMessage, setLoadingMessage] = useState('');
   const [result, setResult] = useState(null);
   const [mode, setMode] = useState(null);
+  const [error, setError] = useState('');
 
   const [data, setData] = useState({
     // שלב 1 - הרעיון
@@ -237,6 +238,7 @@ export default function StartupStudio() {
   // ----- יצירת תוכנית עסקית מקצועית -----
   const generateBusinessPlan = async () => {
     setLoading(true);
+    setError('');
     setLoadingMessage('מנתח את הרעיון והשוק...');
     
     setTimeout(() => setLoadingMessage('בונה מודל עסקי ופיננסי...'), 4000);
@@ -289,14 +291,14 @@ ${businessContext}
     "threats": ["4 איומים"]
   },
   "financials": {
-    "monthlyRevenue": מספר,
-    "monthlyVariableCosts": מספר,
-    "monthlyFixedCosts": מספר,
-    "monthlyProfit": מספר,
-    "yearlyProfit": מספר,
-    "breakEvenMonths": מספר,
-    "breakEvenUnits": מספר,
-    "totalInvestment": מספר,
+    "monthlyRevenue":  0,
+    "monthlyVariableCosts":  0,
+    "monthlyFixedCosts":  0,
+    "monthlyProfit":  0,
+    "yearlyProfit":  0,
+    "breakEvenMonths":  0,
+    "breakEvenUnits":  0,
+    "totalInvestment":  0,
     "cashFlowYear1": [
       {"month": 1, "revenue": 0, "expenses": 0, "balance": 0},
       {"month": 3, "revenue": 0, "expenses": 0, "balance": 0},
@@ -304,7 +306,7 @@ ${businessContext}
       {"month": 9, "revenue": 0, "expenses": 0, "balance": 0},
       {"month": 12, "revenue": 0, "expenses": 0, "balance": 0}
     ],
-    "fundingNeeded": מספר,
+    "fundingNeeded":  0,
     "fundingRecommendation": "המלצת מימון מפורטת"
   }
 }`;
@@ -319,7 +321,7 @@ ${businessContext}
   "marketingStrategy": {
     "positioning": "מיצוב",
     "targetMessage": "מסר מרכזי",
-    "tactics": [{"channel": "ערוץ", "description": "מה לעשות", "monthlyBudget": מספר, "expectedROI": "תשואה"}],
+    "tactics": [{"channel": "ערוץ", "description": "מה לעשות", "monthlyBudget":  0, "expectedROI": "תשואה"}],
     "customerAcquisitionCost": "CAC",
     "lifetimeValue": "LTV",
     "ltvToCacRatio": "יחס ופירוש"
@@ -338,7 +340,7 @@ ${businessContext}
     "compensationStrategy": "אסטרטגיית תגמול"
   },
   "risks": [{"risk": "סיכון", "probability": "גבוה/בינוני/נמוך", "impact": "גבוה/בינוני/נמוך", "mitigation": "התמודדות"}],
-  "regulatoryRequirements": [{"requirement": "דרישה", "authority": "רשות", "estimatedCost": מספר, "timeframe": "זמן"}],
+  "regulatoryRequirements": [{"requirement": "דרישה", "authority": "רשות", "estimatedCost":  0, "timeframe": "זמן"}],
   "actionPlan": {
     "month1": ["משימה 1", "משימה 2", "משימה 3"],
     "month2": ["משימה 1", "משימה 2"],
@@ -354,7 +356,7 @@ ${businessContext}
     "exitOptions": ["אפשרות 1", "אפשרות 2"]
   },
   "honestAssessment": {
-    "viabilityScore": ציון 1-10,
+    "viabilityScore":  7,
     "strongestAspect": "צד חזק",
     "weakestAspect": "צד חלש",
     "criticalSuccessFactors": ["3 גורמים"],
@@ -375,7 +377,7 @@ ${businessContext}
       setView('results');
     } catch (err) {
       console.error(err);
-      alert('אירעה שגיאה: ' + (err?.message || err) + '\n\nנסה שוב, ואם הבעיה חוזרת — שלח את ההודעה הזו.');
+      setError(err?.message ? String(err.message) : String(err));
     } finally {
       setLoading(false);
     }
@@ -385,6 +387,7 @@ ${businessContext}
   // ----- יצירת תכנון אדריכלי (נשאר זהה) -----
   const generateSpacePlan = async () => {
     setLoading(true);
+    setError('');
     setLoadingMessage('בודק את מידות המקום...');
     setTimeout(() => setLoadingMessage('מתכנן את חלוקת האזורים...'), 2000);
     setTimeout(() => setLoadingMessage('מחשב נקודות חשמל ואינסטלציה...'), 5000);
@@ -420,7 +423,7 @@ ${businessContext}
       setView('results');
     } catch (err) {
       console.error(err);
-      alert('אירעה שגיאה: ' + (err?.message || err) + '\n\nנסה שוב, ואם הבעיה חוזרת — שלח את ההודעה הזו.');
+      setError(err?.message ? String(err.message) : String(err));
     } finally {
       setLoading(false);
     }
@@ -461,9 +464,12 @@ ${businessContext}
   };
 
   const formatNum = (n) => {
-    if (!n && n !== 0) return '0';
-    return new Intl.NumberFormat('he-IL').format(Math.round(n));
+    const num = typeof n === 'number' ? n : parseFloat(n);
+    if (!Number.isFinite(num)) return '0';
+    return new Intl.NumberFormat('he-IL').format(Math.round(num));
   };
+
+  const arr = (x) => Array.isArray(x) ? x : [];
 
   // ========== HOME ==========
   if (view === 'home') {
@@ -591,6 +597,37 @@ ${businessContext}
             חזרה לדף הבית
           </button>
 
+          {error && (
+            <div className="mb-6 bg-red-50 border-2 border-red-200 rounded-2xl p-5">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold">!</div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold text-red-900 mb-1">היצירה נכשלה</h4>
+                  <p className="text-sm text-red-800 break-words">{error}</p>
+                  <p className="text-xs text-red-700 mt-2">הקלט שלך נשמר. אפשר לנסות שוב — אם הבעיה ממשיכה, הראה את ההודעה הזו.</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setError('');
+                    if (mode === 'business') generateBusinessPlan();
+                    else generateSpacePlan();
+                  }}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700"
+                >
+                  נסה שוב
+                </button>
+                <button
+                  onClick={() => setError('')}
+                  className="px-4 py-2 bg-white text-red-700 border border-red-300 rounded-lg text-sm font-semibold hover:bg-red-50"
+                >
+                  סגור
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-slate-600">
@@ -652,6 +689,7 @@ ${businessContext}
                         onChange={(e) => update(field.key, e.target.value)}
                         placeholder={field.placeholder}
                         rows={3}
+                        maxLength={2000}
                         className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-offset-1 focus:border-transparent outline-none transition ${
                           isFilled
                             ? mode === 'business' ? 'border-blue-200 bg-blue-50/30 focus:ring-blue-400' : 'border-emerald-200 bg-emerald-50/30 focus:ring-emerald-400'
@@ -664,6 +702,7 @@ ${businessContext}
                         value={value}
                         onChange={(e) => update(field.key, e.target.value)}
                         placeholder={field.placeholder}
+                        maxLength={field.type === 'number' ? undefined : 500}
                         className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-offset-1 focus:border-transparent outline-none transition ${
                           isFilled
                             ? mode === 'business' ? 'border-blue-200 bg-blue-50/30 focus:ring-blue-400' : 'border-emerald-200 bg-emerald-50/30 focus:ring-emerald-400'
@@ -748,7 +787,7 @@ ${businessContext}
                 הנחות מקצועיות שעשיתי
               </h3>
               <ul className="space-y-2">
-                {result.assumptionsMade.map((a, i) => (
+                {arr(result.assumptionsMade).map((a, i) => (
                   <li key={i} className="text-sm text-amber-900 flex items-start gap-2">
                     <span className="text-amber-600 font-bold mt-0.5">•</span>
                     <span>{a}</span>
@@ -826,7 +865,7 @@ ${businessContext}
                 <div className="mb-5">
                   <h4 className="font-bold text-slate-900 mb-2">📈 מגמות שוק</h4>
                   <ul className="space-y-2">
-                    {result.marketAnalysis.marketTrends.map((t, i) => (
+                    {arr(result.marketAnalysis.marketTrends).map((t, i) => (
                       <li key={i} className="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{t}</li>
                     ))}
                   </ul>
@@ -837,7 +876,7 @@ ${businessContext}
                 <div>
                   <h4 className="font-bold text-slate-900 mb-3">🏢 ניתוח מתחרים</h4>
                   <div className="space-y-3">
-                    {result.marketAnalysis.competitorAnalysis.map((c, i) => (
+                    {arr(result.marketAnalysis.competitorAnalysis).map((c, i) => (
                       <div key={i} className="bg-slate-50 rounded-2xl p-4">
                         <h5 className="font-bold text-slate-900 mb-2">{c.name}</h5>
                         <div className="grid md:grid-cols-3 gap-3 text-sm">
@@ -876,7 +915,7 @@ ${businessContext}
                   <div key={i} className={`${q.bg} rounded-2xl p-4`}>
                     <h4 className={`font-bold ${q.text} mb-2`}>{q.title}</h4>
                     <ul className={`space-y-1.5 text-sm ${q.text}`}>
-                      {q.items.map((x, j) => <li key={j}>• {x}</li>)}
+                      {arr(q.items).map((x, j) => <li key={j}>• {x}</li>)}
                     </ul>
                   </div>
                 ))}
@@ -900,7 +939,7 @@ ${businessContext}
                     </tr>
                   </thead>
                   <tbody>
-                    {result.financials.cashFlowYear1.map((m, i) => (
+                    {arr(result.financials.cashFlowYear1).map((m, i) => (
                       <tr key={i} className="border-b border-slate-100">
                         <td className="py-3 px-2 font-semibold">חודש {m.month}</td>
                         <td className="py-3 px-2 text-emerald-700">₪{formatNum(m.revenue)}</td>
@@ -936,7 +975,7 @@ ${businessContext}
               {result.marketingStrategy.tactics && (
                 <div className="space-y-3 mb-4">
                   <h4 className="font-bold text-slate-900">טקטיקות שיווקיות</h4>
-                  {result.marketingStrategy.tactics.map((t, i) => (
+                  {arr(result.marketingStrategy.tactics).map((t, i) => (
                     <div key={i} className="flex items-start gap-3 p-4 bg-gradient-to-l from-blue-50 to-transparent rounded-2xl border-r-4 border-blue-500">
                       <div className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">{i + 1}</div>
                       <div className="flex-1">
@@ -982,7 +1021,7 @@ ${businessContext}
                   <div className="bg-slate-50 rounded-2xl p-4">
                     <div className="font-semibold text-slate-900 mb-2">מערכות טכנולוגיות</div>
                     <ul className="space-y-1">
-                      {result.operationalPlan.techStack.map((t, i) => (
+                      {arr(result.operationalPlan.techStack).map((t, i) => (
                         <li key={i} className="text-sm text-slate-700">• {t}</li>
                       ))}
                     </ul>
@@ -1022,7 +1061,7 @@ ${businessContext}
                 <div className="bg-amber-50 rounded-2xl p-4 mb-3">
                   <div className="font-bold text-amber-900 mb-2">⭐ גיוסים קריטיים</div>
                   <ul className="space-y-1">
-                    {result.teamStructure.criticalHires.map((h, i) => (
+                    {arr(result.teamStructure.criticalHires).map((h, i) => (
                       <li key={i} className="text-sm text-amber-900">• {h}</li>
                     ))}
                   </ul>
@@ -1040,7 +1079,7 @@ ${businessContext}
             <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
               <h3 className="text-2xl font-bold text-slate-900 mb-5">⚠️ ניתוח סיכונים והתמודדות</h3>
               <div className="space-y-3">
-                {result.risks.map((r, i) => (
+                {arr(result.risks).map((r, i) => (
                   <div key={i} className="bg-amber-50 border-r-4 border-amber-500 rounded-2xl p-4">
                     <div className="font-bold text-amber-900 mb-2">{r.risk}</div>
                     <div className="flex gap-2 mb-2 text-xs">
@@ -1059,7 +1098,7 @@ ${businessContext}
             <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
               <h3 className="text-2xl font-bold text-slate-900 mb-5">📜 דרישות רגולטוריות</h3>
               <div className="space-y-3">
-                {result.regulatoryRequirements.map((r, i) => (
+                {arr(result.regulatoryRequirements).map((r, i) => (
                   <div key={i} className="bg-slate-50 rounded-2xl p-4">
                     <div className="font-bold text-slate-900 mb-1">{r.requirement}</div>
                     <div className="text-sm text-slate-700">
@@ -1088,7 +1127,7 @@ ${businessContext}
                   <div key={i} className={`${phase.color} rounded-2xl p-4`}>
                     <h4 className={`font-bold ${phase.text} mb-2`}>{phase.label}</h4>
                     <ul className={`space-y-1.5 text-sm ${phase.text}`}>
-                      {phase.items.map((item, j) => (
+                      {arr(phase.items).map((item, j) => (
                         <li key={j} className="flex items-start gap-2">
                           <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
                           <span>{item}</span>
@@ -1106,7 +1145,7 @@ ${businessContext}
             <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
               <h3 className="text-2xl font-bold text-slate-900 mb-5">📊 מדדי הצלחה (KPIs)</h3>
               <div className="grid md:grid-cols-2 gap-3">
-                {result.kpis.map((kpi, i) => (
+                {arr(result.kpis).map((kpi, i) => (
                   <div key={i} className="bg-slate-50 rounded-2xl p-4">
                     <div className="font-bold text-slate-900 mb-1">{kpi.metric}</div>
                     <div className="text-sm text-slate-700">🎯 יעד: {kpi.target}</div>
@@ -1138,7 +1177,7 @@ ${businessContext}
                   <div className="bg-white rounded-2xl p-4">
                     <div className="font-bold text-slate-900 mb-2">🚪 אפשרויות יציאה</div>
                     <ul className="space-y-1">
-                      {result.longTermVision.exitOptions.map((opt, i) => (
+                      {arr(result.longTermVision.exitOptions).map((opt, i) => (
                         <li key={i} className="text-sm text-slate-700">• {opt}</li>
                       ))}
                     </ul>
@@ -1171,7 +1210,7 @@ ${businessContext}
                 <div className="bg-white/10 backdrop-blur rounded-2xl p-4 mb-4">
                   <div className="font-bold text-white mb-2">🎯 גורמי הצלחה קריטיים</div>
                   <ul className="space-y-1">
-                    {result.honestAssessment.criticalSuccessFactors.map((f, i) => (
+                    {arr(result.honestAssessment.criticalSuccessFactors).map((f, i) => (
                       <li key={i} className="text-sm text-slate-200">• {f}</li>
                     ))}
                   </ul>
@@ -1182,7 +1221,7 @@ ${businessContext}
                 <div className="bg-red-900/40 rounded-2xl p-4 mb-4">
                   <div className="font-bold text-red-200 mb-2">🚩 דגלים אדומים</div>
                   <ul className="space-y-1">
-                    {result.honestAssessment.redFlags.map((f, i) => (
+                    {arr(result.honestAssessment.redFlags).map((f, i) => (
                       <li key={i} className="text-sm text-red-100">• {f}</li>
                     ))}
                   </ul>
@@ -1198,7 +1237,7 @@ ${businessContext}
                 <div className="bg-emerald-900/40 rounded-2xl p-4">
                   <div className="font-bold text-emerald-200 mb-2">⚡ הצעדים הבאים שלך</div>
                   <ol className="space-y-2">
-                    {result.honestAssessment.nextSteps.map((s, i) => (
+                    {arr(result.honestAssessment.nextSteps).map((s, i) => (
                       <li key={i} className="text-sm text-emerald-100 flex gap-2">
                         <span className="font-bold">{i + 1}.</span>
                         <span>{s}</span>
@@ -1261,7 +1300,7 @@ ${businessContext}
             <div className="bg-slate-50 rounded-2xl p-4 overflow-auto">
               <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-auto" style={{ maxHeight: '600px' }}>
                 <rect x="0" y="0" width={svgWidth} height={svgHeight} fill="#f8fafc" stroke="#1e293b" strokeWidth="3" />
-                {result.zones.map((zone, i) => {
+                {arr(result.zones).map((zone, i) => {
                   const x = zone.x * scaleX;
                   const y = zone.y * scaleY;
                   const w = zone.width * scaleX;
@@ -1282,7 +1321,7 @@ ${businessContext}
           <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
             <h3 className="text-xl font-bold text-slate-900 mb-5">פירוט אזורים + מפרט טכני</h3>
             <div className="space-y-4">
-              {result.zones.map((zone, i) => (
+              {arr(result.zones).map((zone, i) => (
                 <div key={i} className="p-5 rounded-2xl border-2 border-slate-100">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: zone.color }}>
@@ -1306,7 +1345,7 @@ ${businessContext}
                       {zone.technicalSpec.furniture && zone.technicalSpec.furniture.length > 0 && (
                         <div className="border-r-4 border-amber-400 pr-3">
                           <h5 className="font-bold text-sm">🪑 ריהוט</h5>
-                          <ul className="text-sm">{zone.technicalSpec.furniture.map((f, j) => <li key={j}>• {f}</li>)}</ul>
+                          <ul className="text-sm">{arr(zone.technicalSpec.furniture).map((f, j) => <li key={j}>• {f}</li>)}</ul>
                         </div>
                       )}
                     </div>
