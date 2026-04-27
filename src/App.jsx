@@ -160,7 +160,7 @@ export default function StartupStudio() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-20250514 ב: claude-3-5-sonnet-20241022",
           max_tokens: 2500,
           messages: [{ role: "user", content: prompt }]
         })
@@ -283,7 +283,7 @@ export default function StartupStudio() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-20250514 ב: claude-3-5-sonnet-20241022",
           max_tokens: 8000,
           messages: [{ role: "user", content: prompt }]
         })
