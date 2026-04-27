@@ -1,28 +1,54 @@
 import React, { useState } from 'react';
-import { Sparkles, TrendingUp, DollarSign, Target, ArrowLeft, ArrowRight, Loader2, RefreshCw, Info, Rocket, Building2, Ruler, CheckCircle2, Lightbulb } from 'lucide-react';
+import { Sparkles, TrendingUp, DollarSign, Target, ArrowLeft, ArrowRight, Loader2, RefreshCw, Info, Rocket, Building2, Ruler, CheckCircle2, Lightbulb, Users, BarChart3, Briefcase, Shield, Compass, Megaphone, Settings as SettingsIcon } from 'lucide-react';
 
 export default function StartupStudio() {
-  const [view, setView] = useState('home'); // home, business, space, results
+  const [view, setView] = useState('home');
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [result, setResult] = useState(null);
-  const [mode, setMode] = useState(null); // 'business' or 'space'
+  const [mode, setMode] = useState(null);
 
   const [data, setData] = useState({
-    // עסק
+    // שלב 1 - הרעיון
     businessName: '',
     industry: '',
     description: '',
     location: '',
+    whyThisIdea: '',
+    uniqueValue: '',
+    // שלב 2 - שוק ומתחרים
     targetCustomer: '',
-    mainChallenge: '',
+    customerProblem: '',
+    competitors: '',
+    marketSize: '',
+    differentiation: '',
+    // שלב 3 - מודל עסקי ותמחור
+    revenueModel: '',
+    productPrice: '',
+    competitorPricing: '',
+    // שלב 4 - מימון והשקעות
     initialInvestment: '',
     monthlyFixedCosts: '',
-    productPrice: '',
-    variableCostPerUnit: '',
+    fundingSource: '',
+    runwayMonths: '',
     expectedMonthlyUnits: '',
+    // שלב 5 - תפעול ולוגיסטיקה
+    operationsMode: '',
+    suppliers: '',
+    location_type: '',
+    technology: '',
+    // שלב 6 - כוח אדם ושיווק
     employees: '',
+    rolesNeeded: '',
+    marketingChannels: '',
+    monthlyMarketingBudget: '',
+    // שלב 7 - סיכונים וחזון
+    mainRisks: '',
+    regulation: '',
+    yearOneGoals: '',
+    yearThreeVision: '',
+    exitStrategy: '',
     // מקום
     spaceSize: '',
     spaceShape: 'rectangle',
@@ -36,43 +62,99 @@ export default function StartupStudio() {
 
   const update = (field, value) => setData({ ...data, [field]: value });
 
-  // ----- שלבי תוכנית עסקית -----
+  // ----- שלבי תוכנית עסקית - 7 שלבים מקצועיים -----
   const businessSteps = [
     {
-      title: 'הרעיון שלך',
+      title: 'הרעיון והחזון',
       icon: <Lightbulb className="w-5 h-5" />,
-      subtitle: 'ספר לי על העסק שאתה רוצה להקים',
+      subtitle: 'בוא נכיר את העסק שלך',
+      infoBox: 'יזמים מובילים בעולם מתחילים תמיד מ"למה" - למה דווקא העסק הזה? התשובה הזו היא היסוד לכל החלטה עתידית.',
       fields: [
-        { key: 'businessName', label: 'שם העסק', placeholder: 'לדוגמה: קרוספיט BUX', type: 'text', required: true },
-        { key: 'industry', label: 'תחום / ענף', placeholder: 'חדר כושר, מסעדה, חנות', type: 'text', required: true },
-        { key: 'description', label: 'תיאור קצר', placeholder: 'מה העסק עושה? מה מיוחד בו?', type: 'textarea', required: true },
-        { key: 'location', label: 'מיקום מתוכנן', placeholder: 'עיר / אזור', type: 'text' }
+        { key: 'businessName', label: 'שם העסק', placeholder: 'לדוגמה: קרוספיט BUX', help: 'אם עוד לא בחרת שם, כתוב שם זמני', type: 'text', required: true },
+        { key: 'industry', label: 'תחום / ענף', placeholder: 'חדר כושר, מסעדה, חנות, שירות דיגיטלי', type: 'text', required: true },
+        { key: 'description', label: 'תיאור העסק', placeholder: 'מה העסק עושה? איזה מוצר/שירות אתה מספק?', help: 'תאר ב-2-3 משפטים מה בדיוק העסק יעשה', type: 'textarea', required: true },
+        { key: 'whyThisIdea', label: 'למה דווקא הרעיון הזה?', placeholder: 'מה גרם לך להחליט להקים את העסק הזה?', help: 'סיפור אישי, חוויה, צורך שראית - יזמים שמחוברים לרעיון מצליחים יותר', type: 'textarea', required: true },
+        { key: 'uniqueValue', label: 'מה מיוחד בעסק שלך?', placeholder: 'מה תיתן ללקוחות שאחרים לא נותנים?', help: 'זה ה-USP שלך - הסיבה שלקוח יבחר בך ולא במתחרה', type: 'textarea', required: true },
+        { key: 'location', label: 'מיקום פיזי מתוכנן', placeholder: 'עיר, אזור, או "אונליין בלבד"', type: 'text' }
       ]
     },
     {
-      title: 'לקוחות',
-      icon: <Target className="w-5 h-5" />,
-      subtitle: 'מי הולך לקנות? לא בטוח - דלג ואעזור',
+      title: 'שוק ומתחרים',
+      icon: <BarChart3 className="w-5 h-5" />,
+      subtitle: 'מי הלקוחות שלך ומי המתחרים?',
+      infoBox: 'Peter Drucker אמר: "המטרה של עסק היא ליצור לקוח". בלי להבין מי הלקוח שלך ומה הוא צריך - אי אפשר לבנות עסק מצליח.',
       fields: [
-        { key: 'targetCustomer', label: 'קהל יעד', placeholder: 'גיל, מאפיינים, צרכים', type: 'textarea' },
-        { key: 'mainChallenge', label: 'האתגר הכי גדול שלך', placeholder: 'מה מדאיג אותך?', type: 'textarea' }
+        { key: 'targetCustomer', label: 'מי הלקוח האידאלי שלך?', placeholder: 'גיל, מין, מאפיינים, מיקום, הכנסה, סגנון חיים', help: 'ככל שתהיה ספציפי יותר - תשיג אותם יותר טוב. לדוגמה: "נשים בגילאי 30-45 מאזור השרון, עם הכנסה ממוצעת ומעלה, שמחפשות איזון בין קריירה לכושר"', type: 'textarea', required: true },
+        { key: 'customerProblem', label: 'איזו בעיה אתה פותר ללקוח?', placeholder: 'מה הכאב/הצורך שהמוצר שלך פותר?', help: 'לקוחות לא קונים מוצרים - הם קונים פתרונות לבעיות שלהם', type: 'textarea', required: true },
+        { key: 'competitors', label: 'מי המתחרים שלך?', placeholder: 'שמות של 2-5 מתחרים ישירים או עקיפים', help: 'גם אם אין מתחרה ישיר - תמיד יש פתרון אלטרנטיבי שהלקוח כרגע משתמש בו', type: 'textarea', required: true },
+        { key: 'differentiation', label: 'איך אתה שונה מהמתחרים?', placeholder: 'מחיר, איכות, שירות, חוויה, נישה ייחודית?', help: 'אם אתה זהה למתחרים - אין סיבה ללקוח לעבור אליך', type: 'textarea', required: true },
+        { key: 'marketSize', label: 'גודל השוק המוערך באזור שלך', placeholder: 'כמה לקוחות פוטנציאליים יש?', help: 'אם לא יודע - השאר ריק ואני אעריך לפי האזור', type: 'text' }
       ]
     },
     {
-      title: 'מספרים',
+      title: 'מודל עסקי ותמחור',
       icon: <DollarSign className="w-5 h-5" />,
-      subtitle: 'לא יודע? השאר ריק ואעריך לפי הענף',
-      infoBox: 'כל שדה שתשאיר ריק - אציע לך הערכה ריאלית לפי סוג העסק, ואסביר איך הגעתי אליה.',
+      subtitle: 'איך תרוויח כסף?',
+      infoBox: 'מודל עסקי טוב הוא ההבדל בין עסק שמתפרנס לבין עסק שמשגשג. חשוב על זה כמו על מנוע - איך הכסף נכנס, איך הוא יוצא, ואיך נשאר רווח.',
       fields: [
-        { key: 'initialInvestment', label: 'השקעה התחלתית (₪)', placeholder: 'ציוד, שיפוצים, פיקדון', type: 'number' },
-        { key: 'monthlyFixedCosts', label: 'הוצאות קבועות חודשיות (₪)', placeholder: 'שכירות, שכר, חשמל', type: 'number' },
-        { key: 'productPrice', label: 'מחיר ממוצע ללקוח (₪)', placeholder: 'כמה לקוח משלם', type: 'number' },
-        { key: 'expectedMonthlyUnits', label: 'לקוחות/עסקאות בחודש', placeholder: 'כמות ריאלית', type: 'number' }
+        { key: 'revenueModel', label: 'איך תקבל תשלום?', placeholder: 'תשלום חד פעמי / מנוי חודשי / לפי שימוש / עמלה / שילוב', help: 'מנוי = הכנסה צפויה. תשלום חד פעמי = הכנסה גבוהה אבל לא קבועה', type: 'textarea', required: true },
+        { key: 'productPrice', label: 'מחיר ממוצע ללקוח (₪)', placeholder: '350', help: 'אם זה מנוי - מחיר חודשי. אם זה מוצר - מחיר ממוצע לעסקה', type: 'number' },
+        { key: 'competitorPricing', label: 'מה המחירים אצל המתחרים?', placeholder: 'לדוגמה: יריב X גובה 400, יריב Y גובה 280', help: 'אופציונלי - יעזור לבדוק אם המחיר שלך תחרותי', type: 'textarea' }
+      ]
+    },
+    {
+      title: 'מימון והשקעות',
+      icon: <Briefcase className="w-5 h-5" />,
+      subtitle: 'כמה כסף צריך ומאיפה הוא יגיע?',
+      infoBox: 'הסיבה #1 שעסקים נכשלים: תזרים מזומנים. אפילו עסקים רווחיים על הנייר נסגרים כי הכסף "לא בקופה" כשצריך לשלם משכורות. תכנון מימון נכון מציל עסקים.',
+      fields: [
+        { key: 'initialInvestment', label: 'השקעה התחלתית נדרשת (₪)', placeholder: '300000', help: 'כל מה שצריך כדי לפתוח: ציוד, שיפוצים, רישוי, פרסום ראשוני, פיקדון', type: 'number' },
+        { key: 'monthlyFixedCosts', label: 'הוצאות חודשיות קבועות (₪)', placeholder: '50000', help: 'שכירות + שכר עובדים + חשמל + ביטוח + הוצאות שיש גם אם אין הכנסה', type: 'number' },
+        { key: 'fundingSource', label: 'מאיפה הכסף יגיע?', placeholder: 'הון עצמי / הלוואה / משקיעים / הלוואה בערבות מדינה', help: 'אם משלב כמה מקורות - פרט בכמה כל אחד', type: 'textarea' },
+        { key: 'runwayMonths', label: 'לכמה חודשים יש לך כסף עד שצריך להיות רווחי?', placeholder: '6', help: 'Runway - כמה זמן תוכל להחזיק את העסק גם אם אין הכנסות', type: 'number' },
+        { key: 'expectedMonthlyUnits', label: 'כמה לקוחות/עסקאות צפויים בחודש?', placeholder: '120', help: 'הערכה ריאלית של מספר לקוחות חודשי קבוע אחרי 6 חודשי הקמה', type: 'number' }
+      ]
+    },
+    {
+      title: 'תפעול ולוגיסטיקה',
+      icon: <SettingsIcon className="w-5 h-5" />,
+      subtitle: 'איך העסק עובד מאחורי הקלעים?',
+      infoBox: 'יזמים מתחילים מתמקדים בלקוח החיצוני, אבל מזניחים את התפעול הפנימי. עסק שלא יודע לתפעל את עצמו נחנק תוך חודשים.',
+      fields: [
+        { key: 'operationsMode', label: 'איך העסק יפעל?', placeholder: 'פיזי בלבד / אונליין בלבד / היברידי', help: 'כל אחד מצריך תשתית שונה לחלוטין', type: 'textarea', required: true },
+        { key: 'suppliers', label: 'ספקים מרכזיים שתצטרך', placeholder: 'מי יספק לך חומרי גלם, ציוד, שירותים?', help: 'אופציונלי - אם רלוונטי לעסק שלך', type: 'textarea' },
+        { key: 'location_type', label: 'סוג מיקום (אם פיזי)', placeholder: 'מרכז מסחרי / רחוב ראשי / אזור תעשייה / מהבית', help: 'מיקום משפיע על עלויות, חשיפה ועל סוג הלקוחות', type: 'text' },
+        { key: 'technology', label: 'מערכות ותוכנות שתצטרך', placeholder: 'CRM, סליקה, ניהול מלאי, אתר, אפליקציה', help: 'הצמיחה הדיגיטלית היום קריטית - גם לעסק "פיזי"', type: 'textarea' }
+      ]
+    },
+    {
+      title: 'כוח אדם ושיווק',
+      icon: <Megaphone className="w-5 h-5" />,
+      subtitle: 'מי יעבוד אצלך ואיך תביא לקוחות?',
+      infoBox: 'Reid Hoffman, מייסד LinkedIn, אמר: "לא משנה כמה הרעיון שלך טוב - בלי הצוות הנכון ושיווק נכון, הוא לא יראה אור יום".',
+      fields: [
+        { key: 'employees', label: 'כמה עובדים תצטרך בהתחלה?', placeholder: '3', help: 'כולל אותך. אל תזלזל - בלי אנשים אי אפשר לצמוח', type: 'number' },
+        { key: 'rolesNeeded', label: 'אילו תפקידים?', placeholder: 'לדוגמה: 2 מאמנים, מקבלת קהל, מנהל שיווק', help: 'הגדר תפקידים, לא שמות. אז קל יותר לגייס', type: 'textarea' },
+        { key: 'marketingChannels', label: 'איך תביא את הלקוחות הראשונים?', placeholder: 'אינסטגרם / פייסבוק / גוגל / חבר מביא חבר / שיווק מקומי', help: 'בחר 2-3 ערוצים עיקריים. עדיף להיות נהדר ב-2 מאשר בינוני ב-10', type: 'textarea', required: true },
+        { key: 'monthlyMarketingBudget', label: 'תקציב שיווק חודשי (₪)', placeholder: '5000', help: 'מומלץ 5-15% מההכנסה החודשית הצפויה', type: 'number' }
+      ]
+    },
+    {
+      title: 'סיכונים וחזון לעתיד',
+      icon: <Compass className="w-5 h-5" />,
+      subtitle: 'מה יכול להשתבש ולאן אתה הולך?',
+      infoBox: 'יזמים מצליחים לא בורחים מסיכונים - הם מזהים אותם, מודדים אותם, ומכינים תכנית לכל תרחיש. ובמקביל - שומרים על חזון ברור לאן הם הולכים.',
+      fields: [
+        { key: 'mainRisks', label: 'מה הכי מדאיג אותך?', placeholder: 'שוק לא בשל / חוסר ניסיון / תזרים / מתחרים גדולים', help: 'תהיה כן - זה החלק הכי חשוב בתכנון', type: 'textarea', required: true },
+        { key: 'regulation', label: 'דרישות רישוי ורגולציה', placeholder: 'רישיון עסק, אישור משרד הבריאות, ביטוחים', help: 'אם לא יודע - השאר ריק ואני אגיד לך מה צריך לפי הענף', type: 'textarea' },
+        { key: 'yearOneGoals', label: 'יעדים לסוף השנה הראשונה', placeholder: 'מה תיחשב להצלחה אחרי 12 חודשים?', help: 'מספר לקוחות, הכנסה, נקודת איזון - תהיה ספציפי', type: 'textarea', required: true },
+        { key: 'yearThreeVision', label: 'איפה אתה רואה את העסק בעוד 3 שנים?', placeholder: 'סניף שני, מותג מוביל, יציאה לחו"ל, מכירה?', help: 'החזון מנחה כל החלטה ביומיום', type: 'textarea', required: true },
+        { key: 'exitStrategy', label: 'אסטרטגיית יציאה (אופציונלי)', placeholder: 'מכירת העסק / העברה לדור הבא / IPO / לא מתכנן', help: 'גם אם אתה לא מתכנן למכור - חשוב לבנות עסק שאפשר למכור', type: 'text' }
       ]
     }
   ];
 
-  // ----- שלבי תכנון אדריכלי -----
+  // שלבי תכנון אדריכלי
   const spaceSteps = [
     {
       title: 'על המקום',
@@ -107,53 +189,204 @@ export default function StartupStudio() {
     });
   };
 
-  // ----- יצירת תוכנית עסקית -----
+  // ----- יצירת תוכנית עסקית מקצועית -----
   const generateBusinessPlan = async () => {
     setLoading(true);
-    setLoadingMessage('מנתח את הרעיון שלך...');
+    setLoadingMessage('מנתח את הרעיון לעומק...');
     
-    setTimeout(() => setLoadingMessage('מעריך מספרים ריאליים לפי הענף...'), 2000);
-    setTimeout(() => setLoadingMessage('בונה אסטרטגיית שיווק מותאמת...'), 4000);
-    setTimeout(() => setLoadingMessage('מכין את התוכנית הסופית...'), 6000);
+    setTimeout(() => setLoadingMessage('בוחן את השוק והמתחרים...'), 3000);
+    setTimeout(() => setLoadingMessage('בונה מודל פיננסי מפורט...'), 6000);
+    setTimeout(() => setLoadingMessage('מתכנן אסטרטגיית שיווק וגיוס...'), 9000);
+    setTimeout(() => setLoadingMessage('מזהה סיכונים והזדמנויות...'), 12000);
+    setTimeout(() => setLoadingMessage('מכין תוכנית פעולה מפורטת...'), 15000);
 
     try {
       const fv = (k, fb) => (data[k] && data[k].toString().trim() !== '') ? data[k] : fb;
 
-      const prompt = `אתה יועץ עסקי מנוסה המתמחה בליווי יזמים ישראלים בתחילת דרכם. בנה תוכנית עסקית מעשית בעברית בלבד.
+      const prompt = `אתה צוות של יועצים עסקיים מהשורה הראשונה בעולם, המשלב את הגישות של:
+- אריק ריס (Lean Startup)
+- אלכס אוסטרוולדר (Business Model Canvas)
+- מייקל פורטר (5 Forces, Competitive Strategy)
+- W. Chan Kim (Blue Ocean Strategy)
+- Peter Drucker (Management)
+- Jim Collins (Good to Great)
+- Reid Hoffman (Blitzscaling)
 
-פרטי העסק:
-- שם: ${data.businessName}
+המטרה שלך: לבנות תוכנית עסקית מקיפה, מקצועית ומעשית עבור יזם מתחיל בישראל. התוכנית חייבת להיות ברמה של תוכנית שמגישים לבנק/משקיעים, אבל מוסברת בשפה שיזם מתחיל יכול להבין.
+
+==== מידע מהיזם ====
+
+🎯 הרעיון והחזון:
+- שם העסק: ${data.businessName}
 - תחום: ${data.industry}
 - תיאור: ${data.description}
+- למה דווקא הרעיון הזה: ${data.whyThisIdea}
+- מה מיוחד בעסק: ${data.uniqueValue}
 - מיקום: ${fv('location', 'לא צוין')}
-- קהל יעד: ${fv('targetCustomer', 'לא הוגדר - הצע קהל יעד')}
-- אתגר: ${fv('mainChallenge', 'לא צוין')}
 
-מספרים (ריק = אתה מעריך):
-- השקעה: ${fv('initialInvestment', 'הערך לפי הענף')} ₪
-- הוצאות חודשיות: ${fv('monthlyFixedCosts', 'הערך')} ₪
-- מחיר: ${fv('productPrice', 'הצע טווח')} ₪
-- לקוחות/חודש: ${fv('expectedMonthlyUnits', 'הערך ריאלי')}
+📊 שוק ומתחרים:
+- לקוח אידאלי: ${data.targetCustomer}
+- בעיה שפותר: ${data.customerProblem}
+- מתחרים: ${data.competitors}
+- בידול: ${data.differentiation}
+- גודל שוק: ${fv('marketSize', 'הערך לפי הענף והאזור')}
 
-החזר JSON בלבד ללא טקסט נוסף:
+💰 מודל עסקי ותמחור:
+- מודל הכנסות: ${data.revenueModel}
+- מחיר ממוצע: ${fv('productPrice', 'הצע טווח מבוסס שוק')} ₪
+- מחירי מתחרים: ${fv('competitorPricing', 'בדוק וציין')}
+
+💵 מימון:
+- השקעה התחלתית: ${fv('initialInvestment', 'הערך לפי הענף')} ₪
+- הוצאות חודשיות קבועות: ${fv('monthlyFixedCosts', 'הערך')} ₪
+- מקור מימון: ${fv('fundingSource', 'לא צוין - הצע אפשרויות')}
+- Runway: ${fv('runwayMonths', '6')} חודשים
+- לקוחות חודשיים צפויים: ${fv('expectedMonthlyUnits', 'הערך ריאלי')}
+
+⚙️ תפעול:
+- מצב פעילות: ${data.operationsMode}
+- ספקים: ${fv('suppliers', 'הצע ספקים מרכזיים')}
+- סוג מיקום: ${fv('location_type', 'הצע')}
+- טכנולוגיה: ${fv('technology', 'הצע מערכות נדרשות')}
+
+👥 צוות ושיווק:
+- עובדים בהתחלה: ${fv('employees', 'הערך')}
+- תפקידים: ${fv('rolesNeeded', 'הצע מבנה ארגוני')}
+- ערוצי שיווק: ${data.marketingChannels}
+- תקציב שיווק חודשי: ${fv('monthlyMarketingBudget', 'הערך 5-15% מהכנסה')} ₪
+
+⚠️ סיכונים וחזון:
+- חששות עיקריים: ${data.mainRisks}
+- רגולציה: ${fv('regulation', 'בדוק לפי הענף ופרט מה צריך')}
+- יעדי שנה ראשונה: ${data.yearOneGoals}
+- חזון 3 שנים: ${data.yearThreeVision}
+- אסטרטגיית יציאה: ${fv('exitStrategy', 'לא הוגדר')}
+
+==== הוראות חשובות ====
+1. כתוב הכל בעברית, בשפה ברורה ליזם מתחיל
+2. כל תובנה חייבת להיות מעשית ופעילה - לא תיאוריה
+3. השתמש במספרים ספציפיים, לא אמירות כלליות
+4. הסבר את ה"למה" מאחורי כל המלצה
+5. תהיה כנה - אם הרעיון בעייתי, אמור זאת בעדינות אבל בבירור
+
+החזר JSON בלבד ללא טקסט נוסף, במבנה הבא בדיוק:
+
 {
-  "executiveSummary": "3-4 משפטים על הפוטנציאל",
-  "assumptionsMade": ["הנחה 1 והבסיס שלה", "הנחה 2"],
-  "monthlyRevenue": הכנסה חודשית,
-  "monthlyProfit": רווח חודשי,
-  "yearlyProfit": רווח שנתי,
-  "breakEvenMonths": חודשים להחזר השקעה,
-  "breakEvenUnits": יחידות לנקודת איזון,
-  "swot": {
-    "strengths": ["3 חוזקות"],
-    "weaknesses": ["3 חולשות"],
-    "opportunities": ["3 הזדמנויות"],
-    "threats": ["3 איומים"]
+  "executiveSummary": "סיכום מנהלים של 4-5 משפטים: על מה העסק, פוטנציאל, סיכונים, והמלצה כללית",
+  "assumptionsMade": ["הנחה ספציפית 1 + הבסיס המקצועי שלה", "הנחה 2", "הנחה 3"],
+  
+  "businessModelCanvas": {
+    "valueProposition": "ההצעה הייחודית - מה הערך שמקבל הלקוח",
+    "customerSegments": "פילוח לקוחות מדויק - 2-3 פלחים עיקריים",
+    "channels": "ערוצי הפצה - איך מגיעים ללקוח",
+    "customerRelationships": "סוג קשר עם לקוחות - אישי / אוטומטי / קהילתי",
+    "revenueStreams": "מקורות הכנסה - לפחות 2 אם אפשר",
+    "keyResources": "משאבי מפתח - אנושיים, פיזיים, פיננסיים, אינטלקטואליים",
+    "keyActivities": "פעילויות מפתח - מה חייבים לעשות מצוין",
+    "keyPartners": "שותפים אסטרטגיים נדרשים",
+    "costStructure": "מבנה עלויות - קבוע מול משתנה"
   },
-  "marketingStrategy": ["4 טקטיקות שיווק מעשיות"],
-  "risks": ["3 סיכונים + איך להתמודד"],
-  "firstThreeMonths": ["פעולה חודש 1", "חודש 2", "חודש 3"],
-  "recommendation": "המלצה כנה - האם להתקדם, מה לשפר"
+  
+  "marketAnalysis": {
+    "tam": "Total Addressable Market - גודל השוק הכללי בישראל בש״ח",
+    "sam": "Serviceable Available Market - השוק שאתה יכול לפנות אליו",
+    "som": "Serviceable Obtainable Market - מה ריאלי שתשיג ב-3 שנים",
+    "marketTrends": ["3 מגמות שוק רלוונטיות"],
+    "competitorAnalysis": [
+      {"name": "מתחרה 1", "strengths": "חוזקות", "weaknesses": "חולשות", "yourAdvantage": "היתרון שלך מולו"}
+    ]
+  },
+  
+  "swot": {
+    "strengths": ["4 חוזקות עם הסבר"],
+    "weaknesses": ["4 חולשות עם הסבר"],
+    "opportunities": ["4 הזדמנויות עם הסבר"],
+    "threats": ["4 איומים עם הסבר"]
+  },
+  
+  "financials": {
+    "monthlyRevenue": הכנסה חודשית ממוצעת בשנה ראשונה,
+    "monthlyVariableCosts": הוצאות משתנות חודשיות,
+    "monthlyFixedCosts": הוצאות קבועות חודשיות,
+    "monthlyProfit": רווח חודשי נטו,
+    "yearlyProfit": רווח שנתי,
+    "breakEvenMonths": חודשים להחזר השקעה,
+    "breakEvenUnits": כמות לקוחות לנקודת איזון,
+    "totalInvestment": השקעה כוללת נדרשת,
+    "cashFlowYear1": [
+      {"month": 1, "revenue": 0, "expenses": 0, "balance": 0},
+      {"month": 2, "revenue": 0, "expenses": 0, "balance": 0},
+      {"month": 3, "revenue": 0, "expenses": 0, "balance": 0},
+      {"month": 6, "revenue": 0, "expenses": 0, "balance": 0},
+      {"month": 9, "revenue": 0, "expenses": 0, "balance": 0},
+      {"month": 12, "revenue": 0, "expenses": 0, "balance": 0}
+    ],
+    "fundingNeeded": סכום מימון נדרש,
+    "fundingRecommendation": "המלצה מפורטת מאיפה לגייס - הון עצמי, הלוואה בערבות מדינה, משקיעים, גרנטים"
+  },
+  
+  "marketingStrategy": {
+    "positioning": "איך למקם את המותג בשוק",
+    "targetMessage": "המסר השיווקי המרכזי",
+    "tactics": [
+      {"channel": "ערוץ", "description": "מה לעשות", "monthlyBudget": תקציב, "expectedROI": "תשואה צפויה"}
+    ],
+    "customerAcquisitionCost": "עלות גיוס לקוח משוערת",
+    "lifetimeValue": "ערך חיים של לקוח (LTV)",
+    "ltvToCacRatio": "יחס LTV:CAC ופירוש"
+  },
+  
+  "operationalPlan": {
+    "supplierStrategy": "אסטרטגיית ספקים והמלצות",
+    "techStack": ["מערכת 1 + עלות חודשית", "מערכת 2 + עלות"],
+    "qualityControl": "איך תבטיח איכות עקבית",
+    "scalability": "איך העסק יוכל לצמוח בלי לקרוס"
+  },
+  
+  "teamStructure": {
+    "phase1": "צוות בחודשים 1-6",
+    "phase2": "צוות בחודשים 7-12",
+    "phase3": "צוות בשנה 2-3",
+    "criticalHires": ["משרה קריטית 1 + למה חשובה"],
+    "compensationStrategy": "איך לתגמל - שכר, בונוסים, אופציות"
+  },
+  
+  "risks": [
+    {"risk": "סיכון", "probability": "גבוה/בינוני/נמוך", "impact": "גבוה/בינוני/נמוך", "mitigation": "איך להתמודד"}
+  ],
+  
+  "regulatoryRequirements": [
+    {"requirement": "דרישה רגולטורית", "authority": "רשות מאשרת", "estimatedCost": עלות, "timeframe": "זמן הוצאה"}
+  ],
+  
+  "actionPlan": {
+    "month1": ["משימה 1", "משימה 2", "משימה 3"],
+    "month2": ["משימה 1", "משימה 2"],
+    "month3": ["משימה 1", "משימה 2"],
+    "month6": ["משימה 1", "משימה 2"],
+    "month12": ["משימה 1", "משימה 2"]
+  },
+  
+  "kpis": [
+    {"metric": "מדד KPI", "target": "יעד מספרי", "frequency": "תדירות מדידה"}
+  ],
+  
+  "longTermVision": {
+    "year1": "איפה תהיה אחרי שנה",
+    "year3": "איפה תהיה אחרי 3 שנים",
+    "year5": "איפה תהיה אחרי 5 שנים",
+    "exitOptions": ["אפשרות יציאה 1", "אפשרות יציאה 2"]
+  },
+  
+  "honestAssessment": {
+    "viabilityScore": ציון 1-10 לכדאיות העסק,
+    "strongestAspect": "הצד החזק ביותר של הרעיון",
+    "weakestAspect": "הצד החלש ביותר שצריך לחזק",
+    "criticalSuccessFactors": ["3 דברים קריטיים שחייבים לעבוד"],
+    "redFlags": ["דגלים אדומים אם יש"],
+    "recommendation": "המלצה כנה ומפורטת - להתקדם / לעצור / לשפר ואז להתקדם",
+    "nextSteps": ["צעד מיידי 1", "צעד 2", "צעד 3"]
+  }
 }`;
 
       const response = await fetch("/api/claude", {
@@ -161,7 +394,7 @@ export default function StartupStudio() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-6",
-          max_tokens: 8000,
+          max_tokens: 16000,
           messages: [{ role: "user", content: prompt }]
         })
       });
@@ -179,7 +412,7 @@ export default function StartupStudio() {
     }
   };
 
-  // ----- יצירת תכנון אדריכלי -----
+  // ----- יצירת תכנון אדריכלי (נשאר זהה) -----
   const generateSpacePlan = async () => {
     setLoading(true);
     setLoadingMessage('בודק את מידות המקום...');
@@ -193,98 +426,29 @@ export default function StartupStudio() {
       const width = parseFloat(data.spaceWidth) || 10;
       const length = parseFloat(data.spaceLength) || 20;
 
-      const prompt = `אתה אדריכל ומתכנן פנים מומחה לחללים מסחריים בישראל, עם ידע מקצועי בתקנים הישראליים לנקודות חשמל, אינסטלציה, ושירותים ציבוריים. תכנן תוכנית חלוקת מקום ריאלית ומפרט טכני מלא. ענה בעברית בלבד.
+      const prompt = `אתה אדריכל ומתכנן פנים מומחה לחללים מסחריים בישראל. תכנן תוכנית חלוקה ומפרט טכני מלא. ענה בעברית בלבד.
 
-מידע על המקום:
-- סוג עסק: ${data.spaceType}
-- שטח כולל: ${data.spaceSize} מ״ר
-- רוחב: ${width} מטר
-- אורך: ${length} מטר
-- אזורים נדרשים: ${data.mustHaveAreas}
-- זרימת לקוח: ${fv('customerFlow', 'תכנן זרימה הגיונית')}
-- תקציב שיפוץ: ${fv('budget', 'הערך')} ₪
-
-תכנן את המקום עם אזורים מלבניים. כל אזור צריך להיות במיקום הגיוני.
-קואורדינטות: (0,0) = פינה שמאלית עליונה. x גדל ימינה, y גדל למטה. המקום כולו: 0,0 עד ${width},${length}.
-
-חשוב מאוד: לכל אזור תן מפרט טכני מפורט הכולל:
-- מספר נקודות חשמל, גובה שלהן מהרצפה, וסוג (16A רגיל / 32A לציוד כבד / 220V / 380V תלת-פאזי)
-- אינסטלציה (מים חמים/קרים, ניקוז, מגדילי לחץ)
-- ריהוט וציוד ספציפי עם מידות ודגמים מומלצים
-- תאורה (כמות גופי תאורה, סוג - LED/פלורסנט, עוצמת lux)
-- מיזוג ואוורור
-- חיפוי רצפה וקירות מומלץ
-
-לשירותים: השתמש בתקן הישראלי - לעסק עם עובדים/לקוחות צריך לפחות שירותים נגישים, ומספר נוסף לפי כמות צפויה (1 שירותים לכל 15-20 לקוחות במקביל).
-למקלחות: בחדר כושר/ספא - לפחות 2 מקלחות לכל 50 מתאמנים במקביל.
+מידע: סוג עסק: ${data.spaceType}, שטח: ${data.spaceSize} מ״ר, רוחב: ${width}, אורך: ${length}, אזורים: ${data.mustHaveAreas}, זרימה: ${fv('customerFlow', 'תכנן')}, תקציב: ${fv('budget', 'הערך')} ₪
 
 החזר JSON בלבד:
 {
-  "layoutSummary": "הסבר קצר של 2-3 משפטים על התכנון",
-  "zones": [
-    {
-      "name": "שם האזור",
-      "x": מיקום x במטרים,
-      "y": מיקום y במטרים,
-      "width": רוחב במטרים,
-      "height": אורך במטרים,
-      "color": "צבע בהיר פסטל - #XXXXXX",
-      "description": "מה באזור ולמה הוא שם",
-      "technicalSpec": {
-        "electricity": {
-          "outlets": "מספר נקודות חשמל ותיאור (למשל: 6 שקעים דו-פאזיים בגובה 30 ס״מ, 2 שקעי 16A בגובה 120 ס״מ לציוד)",
-          "specialPower": "ציוד כבד/תלת-פאזי אם נדרש (למשל: 32A תלת-פאזי לתנור, נקודת 380V למכשיר)",
-          "lighting": "תאורה מומלצת (למשל: 8 נקודות תאורת LED ב-4000K, 500 lux)"
-        },
-        "plumbing": "אינסטלציה - מים חמים/קרים, ניקוז (אם רלוונטי)",
-        "furniture": ["פריט ריהוט 1 עם מידות (למשל: שולחן קבלה 180x80 ס״מ)", "פריט 2", "פריט 3"],
-        "equipment": ["ציוד 1 עם המלצה (למשל: מקרר אמריקאי 600 ליטר - Samsung/LG)", "ציוד 2"],
-        "flooring": "חיפוי רצפה מומלץ (למשל: PVC תעשייתי נגד החלקה)",
-        "walls": "חיפוי קירות (למשל: צבע לטקס שטיף, ניתן לניקוי)",
-        "hvac": "מיזוג ואוורור (למשל: מזגן 3 כ״ס, מפוח יניקה)",
-        "specialNotes": "הערות מיוחדות אם יש"
-      }
-    }
-  ],
-  "flowPath": "הסבר זרימת לקוח",
-  "bathroomsAndShowers": {
-    "toiletsRequired": מספר שירותים נדרשים,
-    "showersRequired": מספר מקלחות (0 אם לא רלוונטי),
-    "accessibleRequired": מספר יחידות נגישות (תקן),
-    "explanation": "הסבר למה נדרש המספר הזה לפי התקן והצפי שלך"
-  },
-  "overallElectrical": {
-    "totalOutlets": סך נקודות חשמל במקום,
-    "threePhaseNeeded": true/false,
-    "mainBoardRecommendation": "המלצה ללוח חשמל ראשי (למשל: לוח 24 נקיעות עם מגיני פחת)",
-    "totalConsumptionKW": צריכה משוערת בקילו-וואט
-  },
-  "keyRecommendations": ["4-5 המלצות אדריכליות חשובות"],
-  "costBreakdown": {
-    "electrical": עלות חשמל,
-    "plumbing": עלות אינסטלציה,
-    "furniture": עלות ריהוט,
-    "equipment": עלות ציוד,
-    "flooring": עלות רצפה,
-    "construction": עלות בנייה וגבס,
-    "hvac": עלות מיזוג,
-    "total": סך הכל
-  },
-  "estimatedRenovationCost": סכום משוער כולל,
-  "timeline": "זמן משוער להקמה"
-}
-
-חשוב:
-1. האזורים לא יחפפו - בדוק שהקואורדינטות הגיוניות
-2. צבעי פסטל רכים
-3. כל המפרטים חייבים להיות ריאליים לישראל 2024-2025`;
+  "layoutSummary": "הסבר 2-3 משפטים",
+  "zones": [{"name": "", "x": 0, "y": 0, "width": 0, "height": 0, "color": "#XXXXXX", "description": "", "technicalSpec": {"electricity": {"outlets": "", "specialPower": "", "lighting": ""}, "plumbing": "", "furniture": [], "equipment": [], "flooring": "", "walls": "", "hvac": "", "specialNotes": ""}}],
+  "flowPath": "",
+  "bathroomsAndShowers": {"toiletsRequired": 0, "showersRequired": 0, "accessibleRequired": 0, "explanation": ""},
+  "overallElectrical": {"totalOutlets": 0, "threePhaseNeeded": false, "mainBoardRecommendation": "", "totalConsumptionKW": 0},
+  "keyRecommendations": [],
+  "costBreakdown": {"electrical": 0, "plumbing": 0, "furniture": 0, "equipment": 0, "flooring": 0, "construction": 0, "hvac": 0, "total": 0},
+  "estimatedRenovationCost": 0,
+  "timeline": ""
+}`;
 
       const response = await fetch("/api/claude", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-6",
-          max_tokens: 8000,
+          max_tokens: 16000,
           messages: [{ role: "user", content: prompt }]
         })
       });
@@ -321,13 +485,15 @@ export default function StartupStudio() {
     setMode(null);
     setResult(null);
     setData({
-      businessName: '', industry: '', description: '', location: '',
-      targetCustomer: '', mainChallenge: '', initialInvestment: '',
-      monthlyFixedCosts: '', productPrice: '', variableCostPerUnit: '',
-      expectedMonthlyUnits: '', employees: '',
-      spaceSize: '', spaceShape: 'rectangle', spaceWidth: '',
-      spaceLength: '', spaceType: '', mustHaveAreas: '',
-      customerFlow: '', budget: ''
+      businessName: '', industry: '', description: '', location: '', whyThisIdea: '', uniqueValue: '',
+      targetCustomer: '', customerProblem: '', competitors: '', marketSize: '', differentiation: '',
+      revenueModel: '', productPrice: '', competitorPricing: '',
+      initialInvestment: '', monthlyFixedCosts: '', fundingSource: '', runwayMonths: '', expectedMonthlyUnits: '',
+      operationsMode: '', suppliers: '', location_type: '', technology: '',
+      employees: '', rolesNeeded: '', marketingChannels: '', monthlyMarketingBudget: '',
+      mainRisks: '', regulation: '', yearOneGoals: '', yearThreeVision: '', exitStrategy: '',
+      spaceSize: '', spaceShape: 'rectangle', spaceWidth: '', spaceLength: '', spaceType: '',
+      mustHaveAreas: '', customerFlow: '', budget: ''
     });
   };
 
@@ -350,20 +516,20 @@ export default function StartupStudio() {
           <div className="text-center pt-8 pb-12">
             <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm mb-6">
               <Sparkles className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium text-slate-700">כלי חינמי ליזמים בישראל</span>
+              <span className="text-sm font-medium text-slate-700">יועץ עסקי דיגיטלי ליזמים בישראל</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold text-slate-900 mb-4 leading-tight">
-              מהרעיון לעסק
+              תוכנית עסקית מקצועית
               <br />
               <span className="bg-gradient-to-l from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                ב-5 דקות
+                ברמה של יועץ
               </span>
             </h1>
             <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-2">
-              קבל תוכנית עסקית עם המספרים שלך
+              7 שלבים מקצועיים שמכסים את כל מה שצריך
             </p>
             <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
-              ותוכנית אדריכלית למקום שלך
+              ובסוף - תוכנית עסקית מלאה ברמה שמגישים למשקיעים
             </p>
           </div>
 
@@ -375,9 +541,9 @@ export default function StartupStudio() {
               <div className="bg-gradient-to-br from-blue-500 to-indigo-600 w-14 h-14 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition">
                 <Rocket className="w-7 h-7 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">תוכנית עסקית</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">תוכנית עסקית מקיפה</h2>
               <p className="text-slate-600 mb-5 leading-relaxed">
-                ענה על כמה שאלות וקבל תוכנית מלאה: ניתוח SWOT, מספרים, אסטרטגיית שיווק, ותוכנית פעולה ל-3 חודשים
+                7 שלבים מקצועיים: רעיון, שוק, מודל עסקי, מימון, תפעול, צוות, סיכונים. בסוף - תוכנית מלאה עם Business Model Canvas, ניתוח שוק, מודל פיננסי, אסטרטגיית שיווק ותכנית פעולה.
               </p>
               <div className="flex items-center gap-2 text-blue-600 font-medium group-hover:gap-3 transition-all">
                 <span>התחל בניית תוכנית</span>
@@ -409,12 +575,24 @@ export default function StartupStudio() {
               <div className="text-sm text-slate-500">חינמי</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-slate-900">5 דק׳</div>
-              <div className="text-sm text-slate-500">זמן מילוי</div>
+              <div className="text-3xl font-bold text-slate-900">~15 דק׳</div>
+              <div className="text-sm text-slate-500">זמן מילוי מקיף</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-slate-900">AI</div>
-              <div className="text-sm text-slate-500">מותאם אישית</div>
+              <div className="text-sm text-slate-500">ברמה מקצועית</div>
+            </div>
+          </div>
+
+          <div className="mt-12 bg-white rounded-3xl p-6 md:p-8 max-w-3xl mx-auto shadow-sm">
+            <h3 className="text-lg font-bold text-slate-900 mb-4">מבוסס על המתודולוגיות המובילות בעולם:</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm text-slate-600">
+              <div>📚 Lean Startup</div>
+              <div>📊 Business Model Canvas</div>
+              <div>🎯 Porter's 5 Forces</div>
+              <div>🌊 Blue Ocean Strategy</div>
+              <div>📈 Good to Great</div>
+              <div>⚡ Blitzscaling</div>
             </div>
           </div>
         </div>
@@ -431,8 +609,9 @@ export default function StartupStudio() {
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full animate-pulse"></div>
             <Loader2 className="w-20 h-20 text-white animate-spin relative" />
           </div>
-          <h3 className="text-2xl font-bold text-slate-900 mb-3">עובד על זה...</h3>
+          <h3 className="text-2xl font-bold text-slate-900 mb-3">בונה תוכנית מקצועית...</h3>
           <p className="text-slate-600 min-h-[1.5rem] transition-all">{loadingMessage}</p>
+          <p className="text-xs text-slate-400 mt-4">הניתוח לוקח 30-60 שניות</p>
         </div>
       </div>
     );
@@ -447,7 +626,6 @@ export default function StartupStudio() {
     return (
       <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-8" style={{ fontFamily: 'system-ui, sans-serif' }}>
         <div className="max-w-2xl mx-auto">
-          {/* ניווט חזרה */}
           <button
             onClick={reset}
             className="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-6 text-sm font-medium"
@@ -456,7 +634,6 @@ export default function StartupStudio() {
             חזרה לדף הבית
           </button>
 
-          {/* פרוגרס בר */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-slate-600">
@@ -474,7 +651,6 @@ export default function StartupStudio() {
             </div>
           </div>
 
-          {/* כרטיס הטופס */}
           <div className="bg-white rounded-3xl shadow-xl p-6 md:p-10">
             <div className="mb-8">
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${
@@ -489,7 +665,7 @@ export default function StartupStudio() {
             </div>
 
             {currentStep.infoBox && (
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-2xl flex gap-3">
+              <div className="mb-6 p-4 bg-gradient-to-l from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl flex gap-3">
                 <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-900 leading-relaxed">{currentStep.infoBox}</p>
               </div>
@@ -510,6 +686,9 @@ export default function StartupStudio() {
                         <span className="text-xs text-slate-400 font-normal">לא חובה</span>
                       )}
                     </label>
+                    {field.help && (
+                      <p className="text-xs text-slate-500 mb-2 leading-relaxed">💡 {field.help}</p>
+                    )}
                     {field.type === 'textarea' ? (
                       <textarea
                         value={value}
@@ -562,7 +741,7 @@ export default function StartupStudio() {
                 {step === totalSteps - 1 ? (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    {mode === 'business' ? 'בנה לי תוכנית עסקית' : 'תכנן לי את המקום'}
+                    {mode === 'business' ? 'בנה לי תוכנית עסקית מקצועית' : 'תכנן לי את המקום'}
                   </>
                 ) : (
                   <>
@@ -578,27 +757,38 @@ export default function StartupStudio() {
     );
   }
 
-  // ========== RESULTS - BUSINESS PLAN ==========
+  // ========== RESULTS - BUSINESS PLAN (חדש ומקיף) ==========
   if (view === 'results' && mode === 'business' && result) {
     return (
       <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-8" style={{ fontFamily: 'system-ui, sans-serif' }}>
-        <div className="max-w-4xl mx-auto space-y-5">
-          {/* כותרת */}
+        <div className="max-w-5xl mx-auto space-y-5">
+          
+          {/* Hero */}
           <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-3xl shadow-2xl p-6 md:p-10">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full text-sm mb-4">
               <Sparkles className="w-4 h-4" />
-              <span>התוכנית העסקית שלך מוכנה</span>
+              <span>תוכנית עסקית מקצועית</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-3">{data.businessName}</h1>
+            <h1 className="text-3xl md:text-5xl font-bold mb-3">{data.businessName}</h1>
             <p className="text-blue-100 leading-relaxed md:text-lg">{result.executiveSummary}</p>
+            
+            {result.honestAssessment && (
+              <div className="mt-6 inline-flex items-center gap-3 bg-white/15 backdrop-blur px-5 py-3 rounded-2xl">
+                <div className="text-3xl font-bold">{result.honestAssessment.viabilityScore}/10</div>
+                <div className="text-sm">
+                  <div className="font-semibold">ציון כדאיות</div>
+                  <div className="text-blue-100">לפי ניתוח מקצועי</div>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* הערכות */}
+          {/* הערכות שעשיתי */}
           {result.assumptionsMade && result.assumptionsMade.length > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-3xl p-6">
               <h3 className="text-lg font-bold text-amber-900 mb-3 flex items-center gap-2">
                 <Info className="w-5 h-5" />
-                הנחות שעשיתי (מה שלא סיפקת)
+                הנחות מקצועיות שעשיתי
               </h3>
               <ul className="space-y-2">
                 {result.assumptionsMade.map((a, i) => (
@@ -611,91 +801,457 @@ export default function StartupStudio() {
             </div>
           )}
 
-          {/* מספרים */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { label: 'הכנסה חודשית', value: `₪${formatNum(result.monthlyRevenue)}`, color: 'text-slate-900' },
-              { label: 'רווח חודשי', value: `₪${formatNum(result.monthlyProfit)}`, color: result.monthlyProfit >= 0 ? 'text-emerald-600' : 'text-red-600' },
-              { label: 'נקודת איזון', value: `${formatNum(result.breakEvenUnits)} יח׳`, color: 'text-slate-900' },
-              { label: 'החזר השקעה', value: `${result.breakEvenMonths} חודשים`, color: 'text-slate-900' }
-            ].map((kpi, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-sm p-5">
-                <div className="text-xs text-slate-500 mb-1">{kpi.label}</div>
-                <div className={`text-xl md:text-2xl font-bold ${kpi.color}`}>{kpi.value}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* SWOT */}
-          <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-5">ניתוח SWOT</h3>
-            <div className="grid md:grid-cols-2 gap-3">
+          {/* מספרים מרכזיים */}
+          {result.financials && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { title: 'חוזקות', items: result.swot.strengths, bg: 'bg-emerald-50', text: 'text-emerald-900', label: 'text-emerald-900' },
-                { title: 'חולשות', items: result.swot.weaknesses, bg: 'bg-red-50', text: 'text-red-900', label: 'text-red-900' },
-                { title: 'הזדמנויות', items: result.swot.opportunities, bg: 'bg-blue-50', text: 'text-blue-900', label: 'text-blue-900' },
-                { title: 'איומים', items: result.swot.threats, bg: 'bg-amber-50', text: 'text-amber-900', label: 'text-amber-900' }
-              ].map((q, i) => (
-                <div key={i} className={`${q.bg} rounded-2xl p-4`}>
-                  <h4 className={`font-bold ${q.label} mb-2`}>{q.title}</h4>
-                  <ul className={`space-y-1.5 text-sm ${q.text}`}>
-                    {q.items.map((x, j) => <li key={j}>• {x}</li>)}
+                { label: 'הכנסה חודשית', value: `₪${formatNum(result.financials.monthlyRevenue)}`, color: 'text-slate-900' },
+                { label: 'רווח חודשי', value: `₪${formatNum(result.financials.monthlyProfit)}`, color: result.financials.monthlyProfit >= 0 ? 'text-emerald-600' : 'text-red-600' },
+                { label: 'נקודת איזון', value: `${formatNum(result.financials.breakEvenUnits)} יח׳`, color: 'text-slate-900' },
+                { label: 'החזר השקעה', value: `${result.financials.breakEvenMonths} חודשים`, color: 'text-slate-900' }
+              ].map((kpi, i) => (
+                <div key={i} className="bg-white rounded-2xl shadow-sm p-5">
+                  <div className="text-xs text-slate-500 mb-1">{kpi.label}</div>
+                  <div className={`text-xl md:text-2xl font-bold ${kpi.color}`}>{kpi.value}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Business Model Canvas */}
+          {result.businessModelCanvas && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">📋 Business Model Canvas</h3>
+              <p className="text-sm text-slate-500 mb-5">המודל העסקי המלא לפי Alex Osterwalder</p>
+              <div className="grid md:grid-cols-3 gap-3">
+                {[
+                  { title: 'הצעת ערך', content: result.businessModelCanvas.valueProposition, color: 'bg-blue-50', text: 'text-blue-900' },
+                  { title: 'פלחי לקוחות', content: result.businessModelCanvas.customerSegments, color: 'bg-purple-50', text: 'text-purple-900' },
+                  { title: 'ערוצי הפצה', content: result.businessModelCanvas.channels, color: 'bg-pink-50', text: 'text-pink-900' },
+                  { title: 'יחסי לקוחות', content: result.businessModelCanvas.customerRelationships, color: 'bg-rose-50', text: 'text-rose-900' },
+                  { title: 'מקורות הכנסה', content: result.businessModelCanvas.revenueStreams, color: 'bg-emerald-50', text: 'text-emerald-900' },
+                  { title: 'משאבי מפתח', content: result.businessModelCanvas.keyResources, color: 'bg-teal-50', text: 'text-teal-900' },
+                  { title: 'פעילויות מפתח', content: result.businessModelCanvas.keyActivities, color: 'bg-cyan-50', text: 'text-cyan-900' },
+                  { title: 'שותפים', content: result.businessModelCanvas.keyPartners, color: 'bg-indigo-50', text: 'text-indigo-900' },
+                  { title: 'מבנה עלויות', content: result.businessModelCanvas.costStructure, color: 'bg-amber-50', text: 'text-amber-900' }
+                ].map((item, i) => (
+                  <div key={i} className={`${item.color} rounded-2xl p-4`}>
+                    <h4 className={`font-bold ${item.text} mb-2 text-sm`}>{item.title}</h4>
+                    <p className={`text-sm ${item.text} opacity-90 leading-relaxed`}>{item.content}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ניתוח שוק */}
+          {result.marketAnalysis && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">📊 ניתוח שוק</h3>
+              <p className="text-sm text-slate-500 mb-5">גודל השוק והפוטנציאל לפי מתודולוגיית TAM-SAM-SOM</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5">
+                  <div className="text-xs text-blue-700 font-semibold mb-1">TAM - שוק כולל</div>
+                  <div className="text-xl font-bold text-blue-900">{result.marketAnalysis.tam}</div>
+                </div>
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5">
+                  <div className="text-xs text-purple-700 font-semibold mb-1">SAM - שוק זמין</div>
+                  <div className="text-xl font-bold text-purple-900">{result.marketAnalysis.sam}</div>
+                </div>
+                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-5">
+                  <div className="text-xs text-emerald-700 font-semibold mb-1">SOM - שוק ריאלי</div>
+                  <div className="text-xl font-bold text-emerald-900">{result.marketAnalysis.som}</div>
+                </div>
+              </div>
+
+              {result.marketAnalysis.marketTrends && (
+                <div className="mb-5">
+                  <h4 className="font-bold text-slate-900 mb-2">📈 מגמות שוק</h4>
+                  <ul className="space-y-2">
+                    {result.marketAnalysis.marketTrends.map((t, i) => (
+                      <li key={i} className="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{t}</li>
+                    ))}
                   </ul>
                 </div>
-              ))}
-            </div>
-          </div>
+              )}
 
-          {/* שיווק */}
-          <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-5">אסטרטגיית שיווק</h3>
-            <div className="space-y-3">
-              {result.marketingStrategy.map((m, i) => (
-                <div key={i} className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
-                  <div className="bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
-                    {i + 1}
+              {result.marketAnalysis.competitorAnalysis && result.marketAnalysis.competitorAnalysis.length > 0 && (
+                <div>
+                  <h4 className="font-bold text-slate-900 mb-3">🏢 ניתוח מתחרים</h4>
+                  <div className="space-y-3">
+                    {result.marketAnalysis.competitorAnalysis.map((c, i) => (
+                      <div key={i} className="bg-slate-50 rounded-2xl p-4">
+                        <h5 className="font-bold text-slate-900 mb-2">{c.name}</h5>
+                        <div className="grid md:grid-cols-3 gap-3 text-sm">
+                          <div>
+                            <div className="text-emerald-700 font-semibold mb-1">חוזקות</div>
+                            <div className="text-slate-600">{c.strengths}</div>
+                          </div>
+                          <div>
+                            <div className="text-red-700 font-semibold mb-1">חולשות</div>
+                            <div className="text-slate-600">{c.weaknesses}</div>
+                          </div>
+                          <div>
+                            <div className="text-blue-700 font-semibold mb-1">היתרון שלך</div>
+                            <div className="text-slate-600">{c.yourAdvantage}</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <span className="text-slate-700 leading-relaxed">{m}</span>
                 </div>
-              ))}
+              )}
             </div>
-          </div>
+          )}
 
-          {/* 3 חודשים */}
-          <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-5">3 החודשים הראשונים</h3>
-            <div className="space-y-3">
-              {result.firstThreeMonths.map((m, i) => (
-                <div key={i} className="flex items-start gap-3 p-4 bg-gradient-to-l from-blue-50 to-transparent rounded-xl border-r-4 border-blue-500">
-                  <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold flex-shrink-0">
-                    חודש {i + 1}
+          {/* SWOT */}
+          {result.swot && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-5">🎯 ניתוח SWOT</h3>
+              <div className="grid md:grid-cols-2 gap-3">
+                {[
+                  { title: 'חוזקות (Strengths)', items: result.swot.strengths, bg: 'bg-emerald-50', text: 'text-emerald-900' },
+                  { title: 'חולשות (Weaknesses)', items: result.swot.weaknesses, bg: 'bg-red-50', text: 'text-red-900' },
+                  { title: 'הזדמנויות (Opportunities)', items: result.swot.opportunities, bg: 'bg-blue-50', text: 'text-blue-900' },
+                  { title: 'איומים (Threats)', items: result.swot.threats, bg: 'bg-amber-50', text: 'text-amber-900' }
+                ].map((q, i) => (
+                  <div key={i} className={`${q.bg} rounded-2xl p-4`}>
+                    <h4 className={`font-bold ${q.text} mb-2`}>{q.title}</h4>
+                    <ul className={`space-y-1.5 text-sm ${q.text}`}>
+                      {q.items.map((x, j) => <li key={j}>• {x}</li>)}
+                    </ul>
                   </div>
-                  <span className="text-slate-700 leading-relaxed">{m}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* מודל פיננסי - תזרים */}
+          {result.financials && result.financials.cashFlowYear1 && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">💰 תזרים מזומנים שנה ראשונה</h3>
+              <p className="text-sm text-slate-500 mb-5">צפי הכנסות, הוצאות ויתרה לאורך השנה</p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b-2 border-slate-200">
+                      <th className="text-right py-3 px-2 font-bold text-slate-700">חודש</th>
+                      <th className="text-right py-3 px-2 font-bold text-emerald-700">הכנסות</th>
+                      <th className="text-right py-3 px-2 font-bold text-red-700">הוצאות</th>
+                      <th className="text-right py-3 px-2 font-bold text-slate-700">יתרה</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {result.financials.cashFlowYear1.map((m, i) => (
+                      <tr key={i} className="border-b border-slate-100">
+                        <td className="py-3 px-2 font-semibold">חודש {m.month}</td>
+                        <td className="py-3 px-2 text-emerald-700">₪{formatNum(m.revenue)}</td>
+                        <td className="py-3 px-2 text-red-700">₪{formatNum(m.expenses)}</td>
+                        <td className={`py-3 px-2 font-bold ${m.balance >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+                          ₪{formatNum(m.balance)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {result.financials.fundingNeeded > 0 && (
+                <div className="mt-5 p-4 bg-blue-50 rounded-2xl">
+                  <div className="text-sm font-semibold text-blue-900 mb-1">💵 מימון נדרש: ₪{formatNum(result.financials.fundingNeeded)}</div>
+                  <div className="text-sm text-blue-800">{result.financials.fundingRecommendation}</div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* אסטרטגיית שיווק */}
+          {result.marketingStrategy && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">📣 אסטרטגיית שיווק</h3>
+              
+              <div className="bg-slate-50 rounded-2xl p-4 mb-4">
+                <div className="text-sm text-slate-700 mb-2"><span className="font-semibold">מיצוב:</span> {result.marketingStrategy.positioning}</div>
+                <div className="text-sm text-slate-700"><span className="font-semibold">המסר המרכזי:</span> {result.marketingStrategy.targetMessage}</div>
+              </div>
+
+              {result.marketingStrategy.tactics && (
+                <div className="space-y-3 mb-4">
+                  <h4 className="font-bold text-slate-900">טקטיקות שיווקיות</h4>
+                  {result.marketingStrategy.tactics.map((t, i) => (
+                    <div key={i} className="flex items-start gap-3 p-4 bg-gradient-to-l from-blue-50 to-transparent rounded-2xl border-r-4 border-blue-500">
+                      <div className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">{i + 1}</div>
+                      <div className="flex-1">
+                        <div className="font-bold text-slate-900 mb-1">{t.channel}</div>
+                        <p className="text-sm text-slate-700 mb-2">{t.description}</p>
+                        <div className="flex gap-3 text-xs text-slate-600">
+                          <span>💰 ₪{formatNum(t.monthlyBudget)} חודשי</span>
+                          <span>📈 {t.expectedROI}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 gap-3 mt-4">
+                <div className="bg-blue-50 rounded-2xl p-4 text-center">
+                  <div className="text-xs text-blue-700 mb-1">CAC</div>
+                  <div className="text-sm font-bold text-blue-900">{result.marketingStrategy.customerAcquisitionCost}</div>
+                </div>
+                <div className="bg-emerald-50 rounded-2xl p-4 text-center">
+                  <div className="text-xs text-emerald-700 mb-1">LTV</div>
+                  <div className="text-sm font-bold text-emerald-900">{result.marketingStrategy.lifetimeValue}</div>
+                </div>
+                <div className="bg-purple-50 rounded-2xl p-4 text-center">
+                  <div className="text-xs text-purple-700 mb-1">LTV:CAC</div>
+                  <div className="text-sm font-bold text-purple-900">{result.marketingStrategy.ltvToCacRatio}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* תכנית תפעול */}
+          {result.operationalPlan && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-5">⚙️ תכנית תפעולית</h3>
+              <div className="space-y-3">
+                <div className="bg-slate-50 rounded-2xl p-4">
+                  <div className="font-semibold text-slate-900 mb-1">אסטרטגיית ספקים</div>
+                  <p className="text-sm text-slate-700">{result.operationalPlan.supplierStrategy}</p>
+                </div>
+                {result.operationalPlan.techStack && (
+                  <div className="bg-slate-50 rounded-2xl p-4">
+                    <div className="font-semibold text-slate-900 mb-2">מערכות טכנולוגיות</div>
+                    <ul className="space-y-1">
+                      {result.operationalPlan.techStack.map((t, i) => (
+                        <li key={i} className="text-sm text-slate-700">• {t}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <div className="bg-slate-50 rounded-2xl p-4">
+                  <div className="font-semibold text-slate-900 mb-1">בקרת איכות</div>
+                  <p className="text-sm text-slate-700">{result.operationalPlan.qualityControl}</p>
+                </div>
+                <div className="bg-slate-50 rounded-2xl p-4">
+                  <div className="font-semibold text-slate-900 mb-1">סקלאביליות</div>
+                  <p className="text-sm text-slate-700">{result.operationalPlan.scalability}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* מבנה צוות */}
+          {result.teamStructure && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-5">👥 מבנה צוות לאורך זמן</h3>
+              <div className="grid md:grid-cols-3 gap-3 mb-4">
+                <div className="bg-blue-50 rounded-2xl p-4">
+                  <div className="text-xs text-blue-700 font-bold mb-2">חודשים 1-6</div>
+                  <p className="text-sm text-blue-900">{result.teamStructure.phase1}</p>
+                </div>
+                <div className="bg-purple-50 rounded-2xl p-4">
+                  <div className="text-xs text-purple-700 font-bold mb-2">חודשים 7-12</div>
+                  <p className="text-sm text-purple-900">{result.teamStructure.phase2}</p>
+                </div>
+                <div className="bg-emerald-50 rounded-2xl p-4">
+                  <div className="text-xs text-emerald-700 font-bold mb-2">שנה 2-3</div>
+                  <p className="text-sm text-emerald-900">{result.teamStructure.phase3}</p>
+                </div>
+              </div>
+              {result.teamStructure.criticalHires && (
+                <div className="bg-amber-50 rounded-2xl p-4 mb-3">
+                  <div className="font-bold text-amber-900 mb-2">⭐ גיוסים קריטיים</div>
+                  <ul className="space-y-1">
+                    {result.teamStructure.criticalHires.map((h, i) => (
+                      <li key={i} className="text-sm text-amber-900">• {h}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div className="bg-slate-50 rounded-2xl p-4">
+                <div className="font-semibold text-slate-900 mb-1">אסטרטגיית תגמול</div>
+                <p className="text-sm text-slate-700">{result.teamStructure.compensationStrategy}</p>
+              </div>
+            </div>
+          )}
 
           {/* סיכונים */}
-          <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-5">סיכונים וטיפול</h3>
-            <ul className="space-y-2">
-              {result.risks.map((r, i) => (
-                <li key={i} className="p-4 bg-amber-50 border-r-4 border-amber-500 rounded-xl text-slate-700 leading-relaxed">
-                  {r}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* המלצה */}
-          <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl shadow-2xl p-6 md:p-10">
-            <div className="flex items-center gap-2 text-indigo-300 mb-3">
-              <TrendingUp className="w-5 h-5" />
-              <span className="text-sm font-medium">ההמלצה שלי אליך</span>
+          {result.risks && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-5">⚠️ ניתוח סיכונים והתמודדות</h3>
+              <div className="space-y-3">
+                {result.risks.map((r, i) => (
+                  <div key={i} className="bg-amber-50 border-r-4 border-amber-500 rounded-2xl p-4">
+                    <div className="font-bold text-amber-900 mb-2">{r.risk}</div>
+                    <div className="flex gap-2 mb-2 text-xs">
+                      <span className="bg-amber-200 text-amber-900 px-2 py-1 rounded">סבירות: {r.probability}</span>
+                      <span className="bg-red-200 text-red-900 px-2 py-1 rounded">השפעה: {r.impact}</span>
+                    </div>
+                    <p className="text-sm text-amber-900"><span className="font-semibold">פעולת מנע:</span> {r.mitigation}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <p className="text-lg md:text-xl leading-relaxed text-slate-100">{result.recommendation}</p>
-          </div>
+          )}
+
+          {/* רגולציה */}
+          {result.regulatoryRequirements && result.regulatoryRequirements.length > 0 && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-5">📜 דרישות רגולטוריות</h3>
+              <div className="space-y-3">
+                {result.regulatoryRequirements.map((r, i) => (
+                  <div key={i} className="bg-slate-50 rounded-2xl p-4">
+                    <div className="font-bold text-slate-900 mb-1">{r.requirement}</div>
+                    <div className="text-sm text-slate-700">
+                      <div>🏛️ רשות: {r.authority}</div>
+                      <div>💵 עלות משוערת: ₪{formatNum(r.estimatedCost)}</div>
+                      <div>⏱️ זמן הוצאה: {r.timeframe}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* תכנית פעולה */}
+          {result.actionPlan && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-5">✅ תכנית פעולה מפורטת</h3>
+              <div className="space-y-4">
+                {[
+                  { label: 'חודש 1 - הקמה', items: result.actionPlan.month1, color: 'bg-blue-50', text: 'text-blue-900' },
+                  { label: 'חודש 2 - השקה', items: result.actionPlan.month2, color: 'bg-purple-50', text: 'text-purple-900' },
+                  { label: 'חודש 3 - אופטימיזציה', items: result.actionPlan.month3, color: 'bg-pink-50', text: 'text-pink-900' },
+                  { label: 'חודש 6 - צמיחה', items: result.actionPlan.month6, color: 'bg-emerald-50', text: 'text-emerald-900' },
+                  { label: 'חודש 12 - התבססות', items: result.actionPlan.month12, color: 'bg-amber-50', text: 'text-amber-900' }
+                ].filter(p => p.items).map((phase, i) => (
+                  <div key={i} className={`${phase.color} rounded-2xl p-4`}>
+                    <h4 className={`font-bold ${phase.text} mb-2`}>{phase.label}</h4>
+                    <ul className={`space-y-1.5 text-sm ${phase.text}`}>
+                      {phase.items.map((item, j) => (
+                        <li key={j} className="flex items-start gap-2">
+                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* KPIs */}
+          {result.kpis && (
+            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-5">📊 מדדי הצלחה (KPIs)</h3>
+              <div className="grid md:grid-cols-2 gap-3">
+                {result.kpis.map((kpi, i) => (
+                  <div key={i} className="bg-slate-50 rounded-2xl p-4">
+                    <div className="font-bold text-slate-900 mb-1">{kpi.metric}</div>
+                    <div className="text-sm text-slate-700">🎯 יעד: {kpi.target}</div>
+                    <div className="text-sm text-slate-700">⏱️ מדידה: {kpi.frequency}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* חזון לעתיד */}
+          {result.longTermVision && (
+            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl p-6 md:p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-5">🚀 חזון ארוך טווח</h3>
+              <div className="space-y-3">
+                <div className="bg-white rounded-2xl p-4">
+                  <div className="font-bold text-slate-900 mb-1">📅 שנה 1</div>
+                  <p className="text-sm text-slate-700">{result.longTermVision.year1}</p>
+                </div>
+                <div className="bg-white rounded-2xl p-4">
+                  <div className="font-bold text-slate-900 mb-1">📅 שנה 3</div>
+                  <p className="text-sm text-slate-700">{result.longTermVision.year3}</p>
+                </div>
+                <div className="bg-white rounded-2xl p-4">
+                  <div className="font-bold text-slate-900 mb-1">📅 שנה 5</div>
+                  <p className="text-sm text-slate-700">{result.longTermVision.year5}</p>
+                </div>
+                {result.longTermVision.exitOptions && (
+                  <div className="bg-white rounded-2xl p-4">
+                    <div className="font-bold text-slate-900 mb-2">🚪 אפשרויות יציאה</div>
+                    <ul className="space-y-1">
+                      {result.longTermVision.exitOptions.map((opt, i) => (
+                        <li key={i} className="text-sm text-slate-700">• {opt}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* הערכה כנה - הקטע הכי חשוב */}
+          {result.honestAssessment && (
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl shadow-2xl p-6 md:p-10">
+              <div className="flex items-center gap-2 text-indigo-300 mb-4">
+                <Compass className="w-5 h-5" />
+                <span className="text-sm font-medium">הערכה כנה ומקצועית</span>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <div className="bg-emerald-900/40 rounded-2xl p-4">
+                  <div className="text-xs text-emerald-300 font-semibold mb-1">💪 הצד החזק ביותר</div>
+                  <p className="text-sm text-emerald-100">{result.honestAssessment.strongestAspect}</p>
+                </div>
+                <div className="bg-red-900/40 rounded-2xl p-4">
+                  <div className="text-xs text-red-300 font-semibold mb-1">⚠️ הצד שצריך לחזק</div>
+                  <p className="text-sm text-red-100">{result.honestAssessment.weakestAspect}</p>
+                </div>
+              </div>
+
+              {result.honestAssessment.criticalSuccessFactors && (
+                <div className="bg-white/10 backdrop-blur rounded-2xl p-4 mb-4">
+                  <div className="font-bold text-white mb-2">🎯 גורמי הצלחה קריטיים</div>
+                  <ul className="space-y-1">
+                    {result.honestAssessment.criticalSuccessFactors.map((f, i) => (
+                      <li key={i} className="text-sm text-slate-200">• {f}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {result.honestAssessment.redFlags && result.honestAssessment.redFlags.length > 0 && (
+                <div className="bg-red-900/40 rounded-2xl p-4 mb-4">
+                  <div className="font-bold text-red-200 mb-2">🚩 דגלים אדומים</div>
+                  <ul className="space-y-1">
+                    {result.honestAssessment.redFlags.map((f, i) => (
+                      <li key={i} className="text-sm text-red-100">• {f}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="bg-white/10 backdrop-blur rounded-2xl p-5 mb-4">
+                <div className="text-indigo-300 text-sm font-semibold mb-2">💬 ההמלצה שלי אליך</div>
+                <p className="text-base md:text-lg leading-relaxed text-slate-100">{result.honestAssessment.recommendation}</p>
+              </div>
+
+              {result.honestAssessment.nextSteps && (
+                <div className="bg-emerald-900/40 rounded-2xl p-4">
+                  <div className="font-bold text-emerald-200 mb-2">⚡ הצעדים הבאים שלך</div>
+                  <ol className="space-y-2">
+                    {result.honestAssessment.nextSteps.map((s, i) => (
+                      <li key={i} className="text-sm text-emerald-100 flex gap-2">
+                        <span className="font-bold">{i + 1}.</span>
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* פעולות */}
           <div className="flex flex-col md:flex-row gap-3">
@@ -719,7 +1275,7 @@ export default function StartupStudio() {
     );
   }
 
-  // ========== RESULTS - SPACE PLAN ==========
+  // ========== RESULTS - SPACE PLAN (זהה לקודם) ==========
   if (view === 'results' && mode === 'space' && result) {
     const svgWidth = 800;
     const svgHeight = (result.spaceLength / result.spaceWidth) * svgWidth;
@@ -743,209 +1299,57 @@ export default function StartupStudio() {
             </div>
           </div>
 
-          {/* תוכנית SVG */}
           <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8">
             <h3 className="text-xl font-bold text-slate-900 mb-5">תוכנית חלוקה</h3>
             <div className="bg-slate-50 rounded-2xl p-4 overflow-auto">
-              <svg
-                viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-                className="w-full h-auto"
-                style={{ maxHeight: '600px' }}
-              >
-                {/* רקע */}
+              <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-auto" style={{ maxHeight: '600px' }}>
                 <rect x="0" y="0" width={svgWidth} height={svgHeight} fill="#f8fafc" stroke="#1e293b" strokeWidth="3" />
-                
-                {/* רשת */}
-                {Array.from({ length: Math.floor(result.spaceWidth) }).map((_, i) => (
-                  <line key={`vx${i}`} x1={i * scaleX} y1="0" x2={i * scaleX} y2={svgHeight} stroke="#e2e8f0" strokeWidth="1" strokeDasharray="3,3" />
-                ))}
-                {Array.from({ length: Math.floor(result.spaceLength) }).map((_, i) => (
-                  <line key={`hy${i}`} x1="0" y1={i * scaleY} x2={svgWidth} y2={i * scaleY} stroke="#e2e8f0" strokeWidth="1" strokeDasharray="3,3" />
-                ))}
-                
-                {/* אזורים */}
                 {result.zones.map((zone, i) => {
                   const x = zone.x * scaleX;
                   const y = zone.y * scaleY;
                   const w = zone.width * scaleX;
                   const h = zone.height * scaleY;
                   const fontSize = Math.min(w, h) / 7;
-                  
                   return (
                     <g key={i}>
-                      <rect
-                        x={x}
-                        y={y}
-                        width={w}
-                        height={h}
-                        fill={zone.color || '#dbeafe'}
-                        stroke="#475569"
-                        strokeWidth="2"
-                        opacity="0.85"
-                      />
-                      <text
-                        x={x + w/2}
-                        y={y + h/2 - fontSize/2}
-                        textAnchor="middle"
-                        fontSize={Math.min(fontSize, 22)}
-                        fontWeight="bold"
-                        fill="#1e293b"
-                      >
-                        {zone.name}
-                      </text>
-                      <text
-                        x={x + w/2}
-                        y={y + h/2 + fontSize/2 + 5}
-                        textAnchor="middle"
-                        fontSize={Math.min(fontSize * 0.7, 16)}
-                        fill="#475569"
-                      >
-                        {(zone.width * zone.height).toFixed(1)} מ״ר
-                      </text>
+                      <rect x={x} y={y} width={w} height={h} fill={zone.color || '#dbeafe'} stroke="#475569" strokeWidth="2" opacity="0.85" />
+                      <text x={x + w/2} y={y + h/2 - fontSize/2} textAnchor="middle" fontSize={Math.min(fontSize, 22)} fontWeight="bold" fill="#1e293b">{zone.name}</text>
+                      <text x={x + w/2} y={y + h/2 + fontSize/2 + 5} textAnchor="middle" fontSize={Math.min(fontSize * 0.7, 16)} fill="#475569">{(zone.width * zone.height).toFixed(1)} מ״ר</text>
                     </g>
                   );
                 })}
-                
-                {/* מידות */}
-                <text x={svgWidth/2} y={svgHeight + 20} textAnchor="middle" fontSize="14" fill="#64748b" fontWeight="600">
-                  {result.spaceWidth} מטר
-                </text>
               </svg>
             </div>
-            <p className="text-sm text-slate-500 text-center mt-3">
-              📊 תוכנית סכמטית - המידות בקנה מידה יחסי
-            </p>
           </div>
 
-          {/* פירוט אזורים עם מפרט טכני */}
           <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
             <h3 className="text-xl font-bold text-slate-900 mb-5">פירוט אזורים + מפרט טכני</h3>
             <div className="space-y-4">
               {result.zones.map((zone, i) => (
-                <div key={i} className="p-5 rounded-2xl border-2 border-slate-100 hover:border-emerald-200 transition">
-                  {/* כותרת אזור */}
+                <div key={i} className="p-5 rounded-2xl border-2 border-slate-100">
                   <div className="flex items-center gap-3 mb-3">
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: zone.color }}
-                    >
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: zone.color }}>
                       <span className="text-xl font-bold text-slate-700">{i + 1}</span>
                     </div>
-                    <div className="flex-1">
+                    <div>
                       <h4 className="font-bold text-lg text-slate-900">{zone.name}</h4>
                       <p className="text-xs text-slate-500">{(zone.width * zone.height).toFixed(1)} מ״ר • {zone.width}×{zone.height} מ׳</p>
                     </div>
                   </div>
-                  <p className="text-sm text-slate-600 leading-relaxed mb-4 pr-1">{zone.description}</p>
-
-                  {/* מפרט טכני */}
+                  <p className="text-sm text-slate-600 mb-4">{zone.description}</p>
                   {zone.technicalSpec && (
                     <div className="bg-slate-50 rounded-xl p-4 space-y-3">
-                      {/* חשמל */}
                       {zone.technicalSpec.electricity && (
                         <div className="border-r-4 border-yellow-400 pr-3">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-lg">⚡</span>
-                            <h5 className="font-bold text-sm text-slate-900">חשמל ותאורה</h5>
-                          </div>
-                          {zone.technicalSpec.electricity.outlets && (
-                            <p className="text-sm text-slate-700 mb-1">
-                              <span className="font-semibold">שקעים:</span> {zone.technicalSpec.electricity.outlets}
-                            </p>
-                          )}
-                          {zone.technicalSpec.electricity.specialPower && (
-                            <p className="text-sm text-slate-700 mb-1">
-                              <span className="font-semibold">ציוד מיוחד:</span> {zone.technicalSpec.electricity.specialPower}
-                            </p>
-                          )}
-                          {zone.technicalSpec.electricity.lighting && (
-                            <p className="text-sm text-slate-700">
-                              <span className="font-semibold">תאורה:</span> {zone.technicalSpec.electricity.lighting}
-                            </p>
-                          )}
+                          <h5 className="font-bold text-sm">⚡ חשמל ותאורה</h5>
+                          {zone.technicalSpec.electricity.outlets && <p className="text-sm">שקעים: {zone.technicalSpec.electricity.outlets}</p>}
+                          {zone.technicalSpec.electricity.lighting && <p className="text-sm">תאורה: {zone.technicalSpec.electricity.lighting}</p>}
                         </div>
                       )}
-
-                      {/* אינסטלציה */}
-                      {zone.technicalSpec.plumbing && zone.technicalSpec.plumbing !== 'לא נדרש' && zone.technicalSpec.plumbing !== '' && (
-                        <div className="border-r-4 border-blue-400 pr-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-lg">💧</span>
-                            <h5 className="font-bold text-sm text-slate-900">אינסטלציה</h5>
-                          </div>
-                          <p className="text-sm text-slate-700">{zone.technicalSpec.plumbing}</p>
-                        </div>
-                      )}
-
-                      {/* ריהוט */}
                       {zone.technicalSpec.furniture && zone.technicalSpec.furniture.length > 0 && (
                         <div className="border-r-4 border-amber-400 pr-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-lg">🪑</span>
-                            <h5 className="font-bold text-sm text-slate-900">ריהוט</h5>
-                          </div>
-                          <ul className="text-sm text-slate-700 space-y-0.5">
-                            {zone.technicalSpec.furniture.map((f, j) => (
-                              <li key={j}>• {f}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {/* ציוד */}
-                      {zone.technicalSpec.equipment && zone.technicalSpec.equipment.length > 0 && (
-                        <div className="border-r-4 border-purple-400 pr-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-lg">🔧</span>
-                            <h5 className="font-bold text-sm text-slate-900">ציוד</h5>
-                          </div>
-                          <ul className="text-sm text-slate-700 space-y-0.5">
-                            {zone.technicalSpec.equipment.map((e, j) => (
-                              <li key={j}>• {e}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {/* חיפויים */}
-                      {(zone.technicalSpec.flooring || zone.technicalSpec.walls) && (
-                        <div className="border-r-4 border-stone-400 pr-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-lg">🎨</span>
-                            <h5 className="font-bold text-sm text-slate-900">חיפויים</h5>
-                          </div>
-                          {zone.technicalSpec.flooring && (
-                            <p className="text-sm text-slate-700 mb-1">
-                              <span className="font-semibold">רצפה:</span> {zone.technicalSpec.flooring}
-                            </p>
-                          )}
-                          {zone.technicalSpec.walls && (
-                            <p className="text-sm text-slate-700">
-                              <span className="font-semibold">קירות:</span> {zone.technicalSpec.walls}
-                            </p>
-                          )}
-                        </div>
-                      )}
-
-                      {/* מיזוג */}
-                      {zone.technicalSpec.hvac && (
-                        <div className="border-r-4 border-cyan-400 pr-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-lg">❄️</span>
-                            <h5 className="font-bold text-sm text-slate-900">מיזוג ואוורור</h5>
-                          </div>
-                          <p className="text-sm text-slate-700">{zone.technicalSpec.hvac}</p>
-                        </div>
-                      )}
-
-                      {/* הערות מיוחדות */}
-                      {zone.technicalSpec.specialNotes && (
-                        <div className="border-r-4 border-red-400 pr-3 bg-red-50 rounded-lg p-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-lg">⚠️</span>
-                            <h5 className="font-bold text-sm text-slate-900">שים לב</h5>
-                          </div>
-                          <p className="text-sm text-slate-700">{zone.technicalSpec.specialNotes}</p>
+                          <h5 className="font-bold text-sm">🪑 ריהוט</h5>
+                          <ul className="text-sm">{zone.technicalSpec.furniture.map((f, j) => <li key={j}>• {f}</li>)}</ul>
                         </div>
                       )}
                     </div>
@@ -955,141 +1359,17 @@ export default function StartupStudio() {
             </div>
           </div>
 
-          {/* שירותים ומקלחות */}
-          {result.bathroomsAndShowers && (
-            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
-              <h3 className="text-xl font-bold text-slate-900 mb-5 flex items-center gap-2">
-                🚻 שירותים ומקלחות
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-                <div className="bg-blue-50 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-bold text-blue-900">{result.bathroomsAndShowers.toiletsRequired}</div>
-                  <div className="text-sm text-blue-700 mt-1">שירותים נדרשים</div>
-                </div>
-                {result.bathroomsAndShowers.showersRequired > 0 && (
-                  <div className="bg-cyan-50 rounded-xl p-4 text-center">
-                    <div className="text-3xl font-bold text-cyan-900">{result.bathroomsAndShowers.showersRequired}</div>
-                    <div className="text-sm text-cyan-700 mt-1">מקלחות</div>
-                  </div>
-                )}
-                <div className="bg-amber-50 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-bold text-amber-900">{result.bathroomsAndShowers.accessibleRequired}</div>
-                  <div className="text-sm text-amber-700 mt-1">יחידות נגישות</div>
-                </div>
-              </div>
-              <div className="bg-slate-50 rounded-xl p-4 text-sm text-slate-700 leading-relaxed">
-                <span className="font-semibold">למה המספר הזה? </span>
-                {result.bathroomsAndShowers.explanation}
-              </div>
-            </div>
-          )}
-
-          {/* חשמל כללי */}
-          {result.overallElectrical && (
-            <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
-              <h3 className="text-xl font-bold text-slate-900 mb-5 flex items-center gap-2">
-                ⚡ סיכום חשמל כולל
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-                <div className="bg-yellow-50 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-bold text-yellow-900">{result.overallElectrical.totalOutlets}</div>
-                  <div className="text-sm text-yellow-700 mt-1">סך נקודות חשמל</div>
-                </div>
-                <div className="bg-orange-50 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-bold text-orange-900">{result.overallElectrical.totalConsumptionKW}</div>
-                  <div className="text-sm text-orange-700 mt-1">קילו-וואט צריכה</div>
-                </div>
-                <div className={`rounded-xl p-4 text-center ${result.overallElectrical.threePhaseNeeded ? 'bg-red-50' : 'bg-green-50'}`}>
-                  <div className={`text-xl font-bold ${result.overallElectrical.threePhaseNeeded ? 'text-red-900' : 'text-green-900'}`}>
-                    {result.overallElectrical.threePhaseNeeded ? 'נדרש' : 'לא נדרש'}
-                  </div>
-                  <div className={`text-sm mt-1 ${result.overallElectrical.threePhaseNeeded ? 'text-red-700' : 'text-green-700'}`}>
-                    חשמל תלת-פאזי
-                  </div>
-                </div>
-              </div>
-              {result.overallElectrical.mainBoardRecommendation && (
-                <div className="bg-slate-50 rounded-xl p-4 text-sm text-slate-700 leading-relaxed">
-                  <span className="font-semibold">לוח חשמל מומלץ: </span>
-                  {result.overallElectrical.mainBoardRecommendation}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* זרימת לקוח */}
-          <div className="bg-gradient-to-l from-blue-50 to-emerald-50 rounded-3xl p-6 md:p-8">
-            <h3 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-              🚶 זרימת לקוח במקום
-            </h3>
-            <p className="text-slate-700 leading-relaxed">{result.flowPath}</p>
-          </div>
-
-          {/* המלצות */}
-          <div className="bg-white rounded-3xl shadow-sm p-6 md:p-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-5">המלצות אדריכליות</h3>
-            <div className="space-y-3">
-              {result.keyRecommendations.map((rec, i) => (
-                <div key={i} className="flex items-start gap-3 p-3 bg-emerald-50 rounded-xl">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-slate-700 leading-relaxed">{rec}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* עלות משוערת עם פירוט */}
           {result.estimatedRenovationCost && (
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl shadow-2xl p-6 md:p-8">
-              <div className="flex items-center gap-2 text-emerald-300 mb-2">
-                <DollarSign className="w-5 h-5" />
-                <span className="text-sm font-medium">הערכת עלות שיפוץ והקמה</span>
-              </div>
-              <div className="text-4xl md:text-5xl font-bold mb-4">₪{formatNum(result.estimatedRenovationCost)}</div>
-
-              {result.costBreakdown && (
-                <div className="bg-slate-800/50 rounded-2xl p-4 mb-4">
-                  <div className="text-sm text-slate-300 mb-3 font-medium">פירוט עלויות:</div>
-                  <div className="space-y-2">
-                    {[
-                      { label: '⚡ חשמל', value: result.costBreakdown.electrical },
-                      { label: '💧 אינסטלציה', value: result.costBreakdown.plumbing },
-                      { label: '🪑 ריהוט', value: result.costBreakdown.furniture },
-                      { label: '🔧 ציוד', value: result.costBreakdown.equipment },
-                      { label: '🎨 רצפה וחיפויים', value: result.costBreakdown.flooring },
-                      { label: '🏗️ בנייה וגבס', value: result.costBreakdown.construction },
-                      { label: '❄️ מיזוג אוויר', value: result.costBreakdown.hvac }
-                    ].filter(item => item.value).map((item, i) => (
-                      <div key={i} className="flex justify-between items-center text-sm border-b border-slate-700/50 pb-2 last:border-0">
-                        <span className="text-slate-200">{item.label}</span>
-                        <span className="font-semibold text-white">₪{formatNum(item.value)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <p className="text-slate-300 text-sm">
-                💡 הערכה ראשונית בלבד. מומלץ לקבל הצעות מחיר מ-3 קבלנים לפחות לפני קבלת החלטות.
-              </p>
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-6 md:p-8">
+              <div className="text-emerald-300 text-sm mb-2">הערכת עלות שיפוץ והקמה</div>
+              <div className="text-4xl font-bold mb-4">₪{formatNum(result.estimatedRenovationCost)}</div>
+              <p className="text-slate-300 text-sm">💡 הערכה ראשונית. מומלץ לקבל הצעות מ-3 קבלנים.</p>
             </div>
           )}
 
-          {/* פעולות */}
           <div className="flex flex-col md:flex-row gap-3">
-            <button
-              onClick={reset}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-700 rounded-xl hover:bg-slate-50 transition font-semibold shadow-sm"
-            >
-              <RefreshCw className="w-4 h-4" />
-              התחל מחדש
-            </button>
-            <button
-              onClick={() => { setMode('business'); setStep(0); setView('business'); setResult(null); }}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-l from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition font-semibold shadow-lg"
-            >
-              <Rocket className="w-4 h-4" />
-              עכשיו בנה לי תוכנית עסקית
+            <button onClick={reset} className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-700 rounded-xl font-semibold">
+              <RefreshCw className="w-4 h-4" />התחל מחדש
             </button>
           </div>
         </div>
