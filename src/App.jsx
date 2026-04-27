@@ -192,173 +192,108 @@ export default function StartupStudio() {
   // ----- יצירת תוכנית עסקית מקצועית -----
   const generateBusinessPlan = async () => {
     setLoading(true);
-    setLoadingMessage('מנתח את הרעיון לעומק...');
+    setLoadingMessage('מנתח את הרעיון והשוק...');
     
-    setTimeout(() => setLoadingMessage('בוחן את השוק והמתחרים...'), 3000);
-    setTimeout(() => setLoadingMessage('בונה מודל פיננסי מפורט...'), 6000);
-    setTimeout(() => setLoadingMessage('מתכנן אסטרטגיית שיווק וגיוס...'), 9000);
-    setTimeout(() => setLoadingMessage('מזהה סיכונים והזדמנויות...'), 12000);
-    setTimeout(() => setLoadingMessage('מכין תוכנית פעולה מפורטת...'), 15000);
+    setTimeout(() => setLoadingMessage('בונה מודל עסקי ופיננסי...'), 4000);
+    setTimeout(() => setLoadingMessage('מתכנן אסטרטגיה ופעולות...'), 8000);
+    setTimeout(() => setLoadingMessage('מסיים את ההמלצות...'), 12000);
 
     try {
       const fv = (k, fb) => (data[k] && data[k].toString().trim() !== '') ? data[k] : fb;
 
-      const prompt = `אתה צוות של יועצים עסקיים מהשורה הראשונה בעולם, המשלב את הגישות של:
-- אריק ריס (Lean Startup)
-- אלכס אוסטרוולדר (Business Model Canvas)
-- מייקל פורטר (5 Forces, Competitive Strategy)
-- W. Chan Kim (Blue Ocean Strategy)
-- Peter Drucker (Management)
-- Jim Collins (Good to Great)
-- Reid Hoffman (Blitzscaling)
+      const businessContext = `העסק: ${data.businessName} | תחום: ${data.industry} | תיאור: ${data.description}
+למה: ${data.whyThisIdea} | מה מיוחד: ${data.uniqueValue} | מיקום: ${fv('location', 'לא צוין')}
+לקוח: ${data.targetCustomer} | בעיה: ${data.customerProblem} | מתחרים: ${data.competitors} | בידול: ${data.differentiation} | גודל שוק: ${fv('marketSize', 'הערך')}
+מודל הכנסות: ${data.revenueModel} | מחיר: ${fv('productPrice', 'הצע')} ₪ | מחירי מתחרים: ${fv('competitorPricing', 'בדוק')}
+השקעה: ${fv('initialInvestment', 'הערך')} ₪ | הוצאות חודשיות: ${fv('monthlyFixedCosts', 'הערך')} ₪ | מימון: ${fv('fundingSource', 'הצע')} | Runway: ${fv('runwayMonths', '6')} חודשים | לקוחות חודשי: ${fv('expectedMonthlyUnits', 'הערך')}
+תפעול: ${data.operationsMode} | ספקים: ${fv('suppliers', 'הצע')} | מיקום: ${fv('location_type', 'הצע')} | טכנולוגיה: ${fv('technology', 'הצע')}
+עובדים: ${fv('employees', 'הערך')} | תפקידים: ${fv('rolesNeeded', 'הצע')} | שיווק: ${data.marketingChannels} | תקציב שיווק: ${fv('monthlyMarketingBudget', 'הערך')} ₪
+חששות: ${data.mainRisks} | רגולציה: ${fv('regulation', 'בדוק')} | יעדים שנה: ${data.yearOneGoals} | חזון 3 שנים: ${data.yearThreeVision} | יציאה: ${fv('exitStrategy', 'לא הוגדר')}`;
 
-המטרה שלך: לבנות תוכנית עסקית מקיפה, מקצועית ומעשית עבור יזם מתחיל בישראל. התוכנית חייבת להיות ברמה של תוכנית שמגישים לבנק/משקיעים, אבל מוסברת בשפה שיזם מתחיל יכול להבין.
+      // קריאה 1: ניתוח עסקי - Canvas, שוק, SWOT, מימון
+      const prompt1 = `אתה צוות יועצים עסקיים מהשורה הראשונה (Lean Startup, BMC, Porter, Blue Ocean). עבור יזם מתחיל בישראל - תן ניתוח עסקי מקצועי. עברית בלבד.
 
-==== מידע מהיזם ====
+${businessContext}
 
-🎯 הרעיון והחזון:
-- שם העסק: ${data.businessName}
-- תחום: ${data.industry}
-- תיאור: ${data.description}
-- למה דווקא הרעיון הזה: ${data.whyThisIdea}
-- מה מיוחד בעסק: ${data.uniqueValue}
-- מיקום: ${fv('location', 'לא צוין')}
-
-📊 שוק ומתחרים:
-- לקוח אידאלי: ${data.targetCustomer}
-- בעיה שפותר: ${data.customerProblem}
-- מתחרים: ${data.competitors}
-- בידול: ${data.differentiation}
-- גודל שוק: ${fv('marketSize', 'הערך לפי הענף והאזור')}
-
-💰 מודל עסקי ותמחור:
-- מודל הכנסות: ${data.revenueModel}
-- מחיר ממוצע: ${fv('productPrice', 'הצע טווח מבוסס שוק')} ₪
-- מחירי מתחרים: ${fv('competitorPricing', 'בדוק וציין')}
-
-💵 מימון:
-- השקעה התחלתית: ${fv('initialInvestment', 'הערך לפי הענף')} ₪
-- הוצאות חודשיות קבועות: ${fv('monthlyFixedCosts', 'הערך')} ₪
-- מקור מימון: ${fv('fundingSource', 'לא צוין - הצע אפשרויות')}
-- Runway: ${fv('runwayMonths', '6')} חודשים
-- לקוחות חודשיים צפויים: ${fv('expectedMonthlyUnits', 'הערך ריאלי')}
-
-⚙️ תפעול:
-- מצב פעילות: ${data.operationsMode}
-- ספקים: ${fv('suppliers', 'הצע ספקים מרכזיים')}
-- סוג מיקום: ${fv('location_type', 'הצע')}
-- טכנולוגיה: ${fv('technology', 'הצע מערכות נדרשות')}
-
-👥 צוות ושיווק:
-- עובדים בהתחלה: ${fv('employees', 'הערך')}
-- תפקידים: ${fv('rolesNeeded', 'הצע מבנה ארגוני')}
-- ערוצי שיווק: ${data.marketingChannels}
-- תקציב שיווק חודשי: ${fv('monthlyMarketingBudget', 'הערך 5-15% מהכנסה')} ₪
-
-⚠️ סיכונים וחזון:
-- חששות עיקריים: ${data.mainRisks}
-- רגולציה: ${fv('regulation', 'בדוק לפי הענף ופרט מה צריך')}
-- יעדי שנה ראשונה: ${data.yearOneGoals}
-- חזון 3 שנים: ${data.yearThreeVision}
-- אסטרטגיית יציאה: ${fv('exitStrategy', 'לא הוגדר')}
-
-==== הוראות חשובות ====
-1. כתוב הכל בעברית, בשפה ברורה ליזם מתחיל
-2. כל תובנה חייבת להיות מעשית ופעילה - לא תיאוריה
-3. השתמש במספרים ספציפיים, לא אמירות כלליות
-4. הסבר את ה"למה" מאחורי כל המלצה
-5. תהיה כנה - אם הרעיון בעייתי, אמור זאת בעדינות אבל בבירור
-
-החזר JSON בלבד ללא טקסט נוסף, במבנה הבא בדיוק:
-
+החזר JSON תקין בלבד, ללא טקסט נוסף:
 {
-  "executiveSummary": "סיכום מנהלים של 4-5 משפטים: על מה העסק, פוטנציאל, סיכונים, והמלצה כללית",
-  "assumptionsMade": ["הנחה ספציפית 1 + הבסיס המקצועי שלה", "הנחה 2", "הנחה 3"],
-  
+  "executiveSummary": "סיכום מנהלים 4-5 משפטים",
+  "assumptionsMade": ["הנחה 1", "הנחה 2", "הנחה 3"],
   "businessModelCanvas": {
-    "valueProposition": "ההצעה הייחודית - מה הערך שמקבל הלקוח",
-    "customerSegments": "פילוח לקוחות מדויק - 2-3 פלחים עיקריים",
-    "channels": "ערוצי הפצה - איך מגיעים ללקוח",
-    "customerRelationships": "סוג קשר עם לקוחות - אישי / אוטומטי / קהילתי",
-    "revenueStreams": "מקורות הכנסה - לפחות 2 אם אפשר",
-    "keyResources": "משאבי מפתח - אנושיים, פיזיים, פיננסיים, אינטלקטואליים",
-    "keyActivities": "פעילויות מפתח - מה חייבים לעשות מצוין",
-    "keyPartners": "שותפים אסטרטגיים נדרשים",
-    "costStructure": "מבנה עלויות - קבוע מול משתנה"
+    "valueProposition": "הצעת ערך",
+    "customerSegments": "פלחי לקוחות",
+    "channels": "ערוצי הפצה",
+    "customerRelationships": "יחסי לקוחות",
+    "revenueStreams": "מקורות הכנסה",
+    "keyResources": "משאבי מפתח",
+    "keyActivities": "פעילויות מפתח",
+    "keyPartners": "שותפים",
+    "costStructure": "מבנה עלויות"
   },
-  
   "marketAnalysis": {
-    "tam": "Total Addressable Market - גודל השוק הכללי בישראל בש״ח",
-    "sam": "Serviceable Available Market - השוק שאתה יכול לפנות אליו",
-    "som": "Serviceable Obtainable Market - מה ריאלי שתשיג ב-3 שנים",
-    "marketTrends": ["3 מגמות שוק רלוונטיות"],
-    "competitorAnalysis": [
-      {"name": "מתחרה 1", "strengths": "חוזקות", "weaknesses": "חולשות", "yourAdvantage": "היתרון שלך מולו"}
-    ]
+    "tam": "TAM בש״ח",
+    "sam": "SAM",
+    "som": "SOM",
+    "marketTrends": ["מגמה 1", "מגמה 2", "מגמה 3"],
+    "competitorAnalysis": [{"name": "מתחרה", "strengths": "חוזקות", "weaknesses": "חולשות", "yourAdvantage": "יתרון שלך"}]
   },
-  
   "swot": {
-    "strengths": ["4 חוזקות עם הסבר"],
-    "weaknesses": ["4 חולשות עם הסבר"],
-    "opportunities": ["4 הזדמנויות עם הסבר"],
-    "threats": ["4 איומים עם הסבר"]
+    "strengths": ["4 חוזקות"],
+    "weaknesses": ["4 חולשות"],
+    "opportunities": ["4 הזדמנויות"],
+    "threats": ["4 איומים"]
   },
-  
   "financials": {
-    "monthlyRevenue": הכנסה חודשית ממוצעת בשנה ראשונה,
-    "monthlyVariableCosts": הוצאות משתנות חודשיות,
-    "monthlyFixedCosts": הוצאות קבועות חודשיות,
-    "monthlyProfit": רווח חודשי נטו,
-    "yearlyProfit": רווח שנתי,
-    "breakEvenMonths": חודשים להחזר השקעה,
-    "breakEvenUnits": כמות לקוחות לנקודת איזון,
-    "totalInvestment": השקעה כוללת נדרשת,
+    "monthlyRevenue": מספר,
+    "monthlyVariableCosts": מספר,
+    "monthlyFixedCosts": מספר,
+    "monthlyProfit": מספר,
+    "yearlyProfit": מספר,
+    "breakEvenMonths": מספר,
+    "breakEvenUnits": מספר,
+    "totalInvestment": מספר,
     "cashFlowYear1": [
       {"month": 1, "revenue": 0, "expenses": 0, "balance": 0},
-      {"month": 2, "revenue": 0, "expenses": 0, "balance": 0},
       {"month": 3, "revenue": 0, "expenses": 0, "balance": 0},
       {"month": 6, "revenue": 0, "expenses": 0, "balance": 0},
       {"month": 9, "revenue": 0, "expenses": 0, "balance": 0},
       {"month": 12, "revenue": 0, "expenses": 0, "balance": 0}
     ],
-    "fundingNeeded": סכום מימון נדרש,
-    "fundingRecommendation": "המלצה מפורטת מאיפה לגייס - הון עצמי, הלוואה בערבות מדינה, משקיעים, גרנטים"
-  },
-  
+    "fundingNeeded": מספר,
+    "fundingRecommendation": "המלצת מימון מפורטת"
+  }
+}`;
+
+      // קריאה 2: אסטרטגיה ותכנית פעולה
+      const prompt2 = `אתה צוות יועצים עסקיים. עבור יזם מתחיל בישראל - תן תכנית אסטרטגית ופעולה. עברית בלבד.
+
+${businessContext}
+
+החזר JSON תקין בלבד, ללא טקסט נוסף:
+{
   "marketingStrategy": {
-    "positioning": "איך למקם את המותג בשוק",
-    "targetMessage": "המסר השיווקי המרכזי",
-    "tactics": [
-      {"channel": "ערוץ", "description": "מה לעשות", "monthlyBudget": תקציב, "expectedROI": "תשואה צפויה"}
-    ],
-    "customerAcquisitionCost": "עלות גיוס לקוח משוערת",
-    "lifetimeValue": "ערך חיים של לקוח (LTV)",
-    "ltvToCacRatio": "יחס LTV:CAC ופירוש"
+    "positioning": "מיצוב",
+    "targetMessage": "מסר מרכזי",
+    "tactics": [{"channel": "ערוץ", "description": "מה לעשות", "monthlyBudget": מספר, "expectedROI": "תשואה"}],
+    "customerAcquisitionCost": "CAC",
+    "lifetimeValue": "LTV",
+    "ltvToCacRatio": "יחס ופירוש"
   },
-  
   "operationalPlan": {
-    "supplierStrategy": "אסטרטגיית ספקים והמלצות",
-    "techStack": ["מערכת 1 + עלות חודשית", "מערכת 2 + עלות"],
-    "qualityControl": "איך תבטיח איכות עקבית",
-    "scalability": "איך העסק יוכל לצמוח בלי לקרוס"
+    "supplierStrategy": "אסטרטגיית ספקים",
+    "techStack": ["מערכת 1 + עלות", "מערכת 2 + עלות"],
+    "qualityControl": "בקרת איכות",
+    "scalability": "סקלאביליות"
   },
-  
   "teamStructure": {
-    "phase1": "צוות בחודשים 1-6",
-    "phase2": "צוות בחודשים 7-12",
-    "phase3": "צוות בשנה 2-3",
-    "criticalHires": ["משרה קריטית 1 + למה חשובה"],
-    "compensationStrategy": "איך לתגמל - שכר, בונוסים, אופציות"
+    "phase1": "צוות 1-6",
+    "phase2": "צוות 7-12",
+    "phase3": "צוות 2-3 שנים",
+    "criticalHires": ["משרה 1", "משרה 2"],
+    "compensationStrategy": "אסטרטגיית תגמול"
   },
-  
-  "risks": [
-    {"risk": "סיכון", "probability": "גבוה/בינוני/נמוך", "impact": "גבוה/בינוני/נמוך", "mitigation": "איך להתמודד"}
-  ],
-  
-  "regulatoryRequirements": [
-    {"requirement": "דרישה רגולטורית", "authority": "רשות מאשרת", "estimatedCost": עלות, "timeframe": "זמן הוצאה"}
-  ],
-  
+  "risks": [{"risk": "סיכון", "probability": "גבוה/בינוני/נמוך", "impact": "גבוה/בינוני/נמוך", "mitigation": "התמודדות"}],
+  "regulatoryRequirements": [{"requirement": "דרישה", "authority": "רשות", "estimatedCost": מספר, "timeframe": "זמן"}],
   "actionPlan": {
     "month1": ["משימה 1", "משימה 2", "משימה 3"],
     "month2": ["משימה 1", "משימה 2"],
@@ -366,43 +301,60 @@ export default function StartupStudio() {
     "month6": ["משימה 1", "משימה 2"],
     "month12": ["משימה 1", "משימה 2"]
   },
-  
-  "kpis": [
-    {"metric": "מדד KPI", "target": "יעד מספרי", "frequency": "תדירות מדידה"}
-  ],
-  
+  "kpis": [{"metric": "מדד", "target": "יעד", "frequency": "תדירות"}],
   "longTermVision": {
-    "year1": "איפה תהיה אחרי שנה",
-    "year3": "איפה תהיה אחרי 3 שנים",
-    "year5": "איפה תהיה אחרי 5 שנים",
-    "exitOptions": ["אפשרות יציאה 1", "אפשרות יציאה 2"]
+    "year1": "שנה 1",
+    "year3": "שנה 3",
+    "year5": "שנה 5",
+    "exitOptions": ["אפשרות 1", "אפשרות 2"]
   },
-  
   "honestAssessment": {
-    "viabilityScore": ציון 1-10 לכדאיות העסק,
-    "strongestAspect": "הצד החזק ביותר של הרעיון",
-    "weakestAspect": "הצד החלש ביותר שצריך לחזק",
-    "criticalSuccessFactors": ["3 דברים קריטיים שחייבים לעבוד"],
+    "viabilityScore": ציון 1-10,
+    "strongestAspect": "צד חזק",
+    "weakestAspect": "צד חלש",
+    "criticalSuccessFactors": ["3 גורמים"],
     "redFlags": ["דגלים אדומים אם יש"],
-    "recommendation": "המלצה כנה ומפורטת - להתקדם / לעצור / לשפר ואז להתקדם",
-    "nextSteps": ["צעד מיידי 1", "צעד 2", "צעד 3"]
+    "recommendation": "המלצה כנה ומפורטת",
+    "nextSteps": ["צעד 1", "צעד 2", "צעד 3"]
   }
 }`;
 
-      const response = await fetch("/api/claude", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 16000,
-          messages: [{ role: "user", content: prompt }]
+      // הקריאות רצות במקבילה!
+      const [response1, response2] = await Promise.all([
+        fetch("/api/claude", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-6",
+            max_tokens: 8000,
+            messages: [{ role: "user", content: prompt1 }]
+          })
+        }),
+        fetch("/api/claude", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-6",
+            max_tokens: 8000,
+            messages: [{ role: "user", content: prompt2 }]
+          })
         })
-      });
+      ]);
 
-      const apiData = await response.json();
-      const text = apiData.content.filter(i => i.type === "text").map(i => i.text).join("\n");
-      const clean = text.replace(/```json|```/g, "").trim();
-      setResult(JSON.parse(clean));
+      const apiData1 = await response1.json();
+      const apiData2 = await response2.json();
+      
+      const text1 = apiData1.content.filter(i => i.type === "text").map(i => i.text).join("\n");
+      const text2 = apiData2.content.filter(i => i.type === "text").map(i => i.text).join("\n");
+      
+      const clean1 = text1.replace(/```json|```/g, "").trim();
+      const clean2 = text2.replace(/```json|```/g, "").trim();
+      
+      const parsed1 = JSON.parse(clean1);
+      const parsed2 = JSON.parse(clean2);
+      
+      // איחוד התוצאות
+      setResult({ ...parsed1, ...parsed2 });
       setView('results');
     } catch (err) {
       console.error(err);
@@ -411,6 +363,7 @@ export default function StartupStudio() {
       setLoading(false);
     }
   };
+
 
   // ----- יצירת תכנון אדריכלי (נשאר זהה) -----
   const generateSpacePlan = async () => {
