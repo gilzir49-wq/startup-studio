@@ -347,11 +347,16 @@ ${businessContext}
       const text1 = apiData1.content.filter(i => i.type === "text").map(i => i.text).join("\n");
       const text2 = apiData2.content.filter(i => i.type === "text").map(i => i.text).join("\n");
       
-      const clean1 = text1.replace(/```json|```/g, "").trim();
-      const clean2 = text2.replace(/```json|```/g, "").trim();
-      
-      const parsed1 = JSON.parse(clean1);
-      const parsed2 = JSON.parse(clean2);
+   const extractJSON = (text) => {
+  const cleaned = text.replace(/```json|```/g, "").trim();
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace === -1 || lastBrace === -1) throw new Error('No JSON found');
+  return cleaned.substring(firstBrace, lastBrace + 1);
+};
+
+const parsed1 = JSON.parse(extractJSON(text1));
+const parsed2 = JSON.parse(extractJSON(text2));
       
       // איחוד התוצאות
       setResult({ ...parsed1, ...parsed2 });
@@ -408,8 +413,7 @@ ${businessContext}
 
       const apiData = await response.json();
       const text = apiData.content.filter(i => i.type === "text").map(i => i.text).join("\n");
-      const clean = text.replace(/```json|```/g, "").trim();
-      const parsed = JSON.parse(clean);
+      const parsed = JSON.parse(extractJSON(text));
       parsed.spaceWidth = width;
       parsed.spaceLength = length;
       setResult(parsed);
