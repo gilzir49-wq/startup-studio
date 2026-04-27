@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, TrendingUp, DollarSign, Target, ArrowLeft, ArrowRight, Loader2, RefreshCw, Info, Rocket, Building2, Ruler, CheckCircle2, Lightbulb, Users, BarChart3, Briefcase, Shield, Compass, Megaphone, Settings as SettingsIcon } from 'lucide-react';
+import { jsonrepair } from 'jsonrepair';
 
 function extractJSON(text) {
   if (!text || typeof text !== 'string') {
@@ -15,7 +16,11 @@ function extractJSON(text) {
   try {
     return JSON.parse(cleaned);
   } catch (e) {
-    throw new Error('JSON לא תקין: ' + e.message + ' | תחילת התוכן: ' + cleaned.slice(0, 150));
+    try {
+      return JSON.parse(jsonrepair(cleaned));
+    } catch (repairErr) {
+      throw new Error('JSON לא תקין (גם אחרי תיקון): ' + e.message + ' | תחילת התוכן: ' + cleaned.slice(0, 150));
+    }
   }
 }
 
