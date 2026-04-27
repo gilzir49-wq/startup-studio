@@ -1,6 +1,46 @@
 import React, { useState } from 'react';
 import { Sparkles, TrendingUp, DollarSign, Target, ArrowLeft, ArrowRight, Loader2, RefreshCw, Info, Rocket, Building2, Ruler, CheckCircle2, Lightbulb, Users, BarChart3, Briefcase, Shield, Compass, Megaphone, Settings as SettingsIcon } from 'lucide-react';
 
+function extractJSON(text) {
+  if (!text || typeof text !== 'string') {
+    throw new Error('המודל החזיר תשובה ריקה');
+  }
+  let cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+    throw new Error('לא נמצא JSON בתשובת המודל. תחילת תשובה: ' + cleaned.slice(0, 200));
+  }
+  cleaned = cleaned.slice(firstBrace, lastBrace + 1);
+  try {
+    return JSON.parse(cleaned);
+  } catch (e) {
+    throw new Error('JSON לא תקין: ' + e.message + ' | תחילת התוכן: ' + cleaned.slice(0, 150));
+  }
+}
+
+async function callClaude({ model, max_tokens, prompt }) {
+  const response = await fetch('/api/claude', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model,
+      max_tokens,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const apiData = await response.json();
+  if (!response.ok) {
+    const detail = apiData?.error?.message || apiData?.error || apiData?.message || JSON.stringify(apiData).slice(0, 200);
+    throw new Error('שגיאת API (' + response.status + '): ' + detail);
+  }
+  if (!apiData?.content || !Array.isArray(apiData.content)) {
+    throw new Error('תשובה לא צפויה מה-API: ' + JSON.stringify(apiData).slice(0, 200));
+  }
+  const text = apiData.content.filter(i => i.type === 'text').map(i => i.text).join('\n');
+  return extractJSON(text);
+}
+
 export default function StartupStudio() {
   const [view, setView] = useState('home');
   const [step, setStep] = useState(0);
@@ -320,45 +360,17 @@ ${businessContext}
 }`;
 
       // הקריאות רצות במקבילה!
-      const [response1, response2] = await Promise.all([
-        fetch("/api/claude", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-6",
-            max_tokens: 8000,
-            messages: [{ role: "user", content: prompt1 }]
-          })
-        }),
-        fetch("/api/claude", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-6",
-            max_tokens: 8000,
-            messages: [{ role: "user", content: prompt2 }]
-          })
-        })
+      const [parsed1, parsed2] = await Promise.all([
+        callClaude({ model: 'claude-sonnet-4-6', max_tokens: 8000, prompt: prompt1 }),
+        callClaude({ model: 'claude-sonnet-4-6', max_tokens: 8000, prompt: prompt2 })
       ]);
 
-      const apiData1 = await response1.json();
-      const apiData2 = await response2.json();
-      
-      const text1 = apiData1.content.filter(i => i.type === "text").map(i => i.text).join("\n");
-      const text2 = apiData2.content.filter(i => i.type === "text").map(i => i.text).join("\n");
-      
-      const clean1 = text1.replace(/```json|```/g, "").trim();
-      const clean2 = text2.replace(/```json|```/g, "").trim();
-      
-      const parsed1 = JSON.parse(clean1);
-      const parsed2 = JSON.parse(clean2);
-      
       // איחוד התוצאות
       setResult({ ...parsed1, ...parsed2 });
       setView('results');
     } catch (err) {
       console.error(err);
-      alert('אירעה שגיאה. נסה שוב.');
+      alert('אירעה שגיאה: ' + (err?.message || err) + '\n\nנסה שוב, ואם הבעיה חוזרת — שלח את ההודעה הזו.');
     } finally {
       setLoading(false);
     }
@@ -396,27 +408,14 @@ ${businessContext}
   "timeline": ""
 }`;
 
-      const response = await fetch("/api/claude", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 16000,
-          messages: [{ role: "user", content: prompt }]
-        })
-      });
-
-      const apiData = await response.json();
-      const text = apiData.content.filter(i => i.type === "text").map(i => i.text).join("\n");
-      const clean = text.replace(/```json|```/g, "").trim();
-      const parsed = JSON.parse(clean);
+      const parsed = await callClaude({ model: 'claude-sonnet-4-6', max_tokens: 16000, prompt });
       parsed.spaceWidth = width;
       parsed.spaceLength = length;
       setResult(parsed);
       setView('results');
     } catch (err) {
       console.error(err);
-      alert('אירעה שגיאה. נסה שוב.');
+      alert('אירעה שגיאה: ' + (err?.message || err) + '\n\nנסה שוב, ואם הבעיה חוזרת — שלח את ההודעה הזו.');
     } finally {
       setLoading(false);
     }
