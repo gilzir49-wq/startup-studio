@@ -325,7 +325,7 @@ ${businessContext}
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "claude-haiku-4-5-20251001",
+            model: "claude-sonnet-4-6",
             max_tokens: 8000,
             messages: [{ role: "user", content: prompt1 }]
           })
@@ -334,7 +334,7 @@ ${businessContext}
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "claude-haiku-4-5-20251001",
+            model: "claude-sonnet-4-6",
             max_tokens: 8000,
             messages: [{ role: "user", content: prompt2 }]
           })
@@ -347,16 +347,11 @@ ${businessContext}
       const text1 = apiData1.content.filter(i => i.type === "text").map(i => i.text).join("\n");
       const text2 = apiData2.content.filter(i => i.type === "text").map(i => i.text).join("\n");
       
-   const extractJSON = (text) => {
-  const cleaned = text.replace(/```json|```/g, "").trim();
-  const firstBrace = cleaned.indexOf('{');
-  const lastBrace = cleaned.lastIndexOf('}');
-  if (firstBrace === -1 || lastBrace === -1) throw new Error('No JSON found');
-  return cleaned.substring(firstBrace, lastBrace + 1);
-};
-
-const parsed1 = JSON.parse(extractJSON(text1));
-const parsed2 = JSON.parse(extractJSON(text2));
+      const clean1 = text1.replace(/```json|```/g, "").trim();
+      const clean2 = text2.replace(/```json|```/g, "").trim();
+      
+      const parsed1 = JSON.parse(clean1);
+      const parsed2 = JSON.parse(clean2);
       
       // איחוד התוצאות
       setResult({ ...parsed1, ...parsed2 });
@@ -405,7 +400,7 @@ const parsed2 = JSON.parse(extractJSON(text2));
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-haiku-4-5-20251001",
+          model: "claude-sonnet-4-6",
           max_tokens: 16000,
           messages: [{ role: "user", content: prompt }]
         })
@@ -413,7 +408,8 @@ const parsed2 = JSON.parse(extractJSON(text2));
 
       const apiData = await response.json();
       const text = apiData.content.filter(i => i.type === "text").map(i => i.text).join("\n");
-      const parsed = JSON.parse(extractJSON(text));
+      const clean = text.replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(clean);
       parsed.spaceWidth = width;
       parsed.spaceLength = length;
       setResult(parsed);
